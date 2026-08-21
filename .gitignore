@@ -1,0 +1,28 @@
+# Whitelist deploy: this folder holds 78 MB of raw source material, but only the
+# ~1.5 MB actually referenced by index.html / gallery.html may reach GitHub Pages.
+# Ignore everything, then re-admit the files that ship.
+
+/*
+
+!/.gitignore
+!/README.md
+!/CNAME
+!/index.html
+!/gallery.html
+!/privacy.html
+!/terms.html
+!/404.html
+!/robots.txt
+!/sitemap.xml
+!/templates/
+
+!/assets/
+/assets/*
+!/assets/logos/
+!/assets/photos/
+!/assets/*.svg
+!/assets/*.webp
+
+# Raw originals — never ship these
+*.png
+.thumbnail

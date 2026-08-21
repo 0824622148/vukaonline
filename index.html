@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <script>document.documentElement.classList.add('js')</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vuka Online — Wake up your business | Be found. Be trusted. Be paid.</title>
+  <meta name="description" content="Vuka Online helps ambitious businesses become discoverable, trusted and accessible through affordable digital infrastructure. Websites, ecommerce, SEO, payments and automation." />
+  <meta property="og:title" content="Vuka Online — Wake up your business" />
+  <meta property="og:description" content="We don't sell websites. We sell growth. Be found. Be trusted. Be paid." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vukaonline.co.za" />
+  <meta property="og:image" content="assets/photos/social-capetown.webp" />
+  <meta name="theme-color" content="#F2F7F3" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg" />
+
+  <!-- Fonts: Familjen Grotesk (headlines & body) + IBM Plex Mono (labels & data) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind Play CDN.
+       The CDN script MUST load before tailwind.config is assigned — the reverse order
+       throws "tailwind is not defined" and every custom colour silently falls back. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            /* Brand Guidelines V1.0 */
+            ink: '#0C231C',           // text & dark surfaces
+            signal: '#31D98C',        // action & emphasis — a FILL, never text on light
+            mist: '#F2F7F3',          // paper
+            sage: '#5C7A6C',          // muted — large/decorative only (4.35:1 on Mist)
+            /* Derived, brand hue preserved, darkened until they pass AA on Mist */
+            'signal-deep': '#177E4F', // green text & links on light — 4.69:1
+            'signal-press': '#31A96E',// hover/pressed fills — never text
+            'sage-text': '#587568',   // muted body copy on light — 4.66:1
+            /* Product ecosystem dots. Currently unused: the services tiles went monochrome,
+         and these four non-green hues are not in Brand Guidelines V1.0. Kept for a
+         possible pricing/comparison page — delete if that never lands. */
+            'p-build': '#31D98C',
+            'p-launch': '#F5C34B',
+            'p-growth': '#4BA3F5',
+            'p-commerce': '#F58B4B',
+            'p-ai': '#B26BF0',
+          },
+          fontFamily: {
+            heading: ['"Familjen Grotesk"', 'system-ui', 'sans-serif'],
+            body: ['"Familjen Grotesk"', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+          },
+          borderRadius: {
+            card: '18px',
+            pill: '100px',
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    :root {
+      /* ── Brand Guidelines V1.0 ──────────────────────
+         Ratio target across the page: 55% Mist · 30% Ink · 10% Signal Green. */
+      --ink: #0C231C;          /* text & dark surfaces */
+      --signal: #31D98C;       /* action & emphasis — a FILL, never text on light */
+      --mist: #F2F7F3;         /* paper */
+      --sage: #5C7A6C;         /* muted — large/decorative only, 4.35:1 on Mist */
+      --white: #FFFFFF;
+
+      /* Derived. Brand hue preserved, darkened until they pass AA on Mist.
+         Signal Green measures 1.69:1 on Mist, so it can never be body text there. */
+      --signal-deep: #177E4F;  /* green text & links on light — 4.69:1 */
+      --signal-press: #31A96E; /* hover/pressed fills — never text */
+      --sage-text: #587568;    /* muted body copy on light — 4.66:1 */
+      --sage-on-ink: #6D907F;  /* muted body copy on Ink — 4.67:1 (brand Sage is 3.50:1) */
+
+      /* Product ecosystem dots. Currently unused: the services tiles went monochrome,
+         and these four non-green hues are not in Brand Guidelines V1.0. Kept for a
+         possible pricing/comparison page — delete if that never lands. */
+      --p-build: #31D98C; --p-launch: #F5C34B; --p-growth: #4BA3F5;
+      --p-commerce: #F58B4B; --p-ai: #B26BF0;
+
+      --font: 'Familjen Grotesk', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --transition: all 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+    html { overflow-x: hidden; max-width: 100%; }
+    /* `clip` rather than `hidden` on <body>: `hidden` turns body into a scroll container,
+       which breaks scroll-linked behaviour. `clip` guards against sideways overflow
+       just the same. */
+    body { overflow-x: clip; max-width: 100%; }
+    h1, h2, p { overflow-wrap: break-word; }
+    /* Collapse desktop hard line-breaks on mobile so long headline lines wrap naturally */
+    .brk { display: none; }
+    @media (min-width: 768px) { .brk { display: block; } }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--mist);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; }
+
+    /* ── Section heading scale ─────────────────────────
+       Familjen Grotesk tops out at 700, so the old 900 weight is gone. The guidelines'
+       −2% tracking carries the density that the heavier weight used to provide. */
+    .h-hero, .h-band, .h-sec { letter-spacing: -0.02em; }
+    /* Sized for the split hero: at ~600px of column, 76px forced the headline to
+       five lines and fought its own hard breaks. */
+    .h-hero  { font-size: clamp(38px, 4.3vw, 56px);  line-height: 1.06; }
+    .h-band  { font-size: clamp(34px, 5.4vw, 60px);  line-height: 1.06; }
+    .h-sec   { font-size: clamp(30px, 4.6vw, 54px);  line-height: 1.09; }
+
+    /* Mono is for labels & data only — uppercase, tracked +10%, never body copy. */
+    .mono-label {
+      font-family: var(--font-mono); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.10em;
+    }
+    /* Figures count as "data" — mono, but tracked normally so numerals stay tight. */
+    .mono-num { font-family: var(--font-mono); font-weight: 500; letter-spacing: -0.01em; }
+
+    /* ── Nav scroll state ──────────────────────────── */
+    #main-nav { transition: background 0.25s ease, border-color 0.25s ease; }
+    .nav-scrolled { background: rgba(242,247,243,.90) !important; }
+
+    /* ── Buttons ───────────────────────────────────── */
+    /* Signal Green fill with an Ink label = 8.98:1. Green text on Mist would be 1.69:1,
+       so the accent always carries the button rather than the words. */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: var(--signal); color: var(--ink);
+      font-weight: 700; font-size: 16px; border-radius: 12px;
+      padding: 15px 26px; transition: var(--transition); white-space: nowrap;
+      box-shadow: 0 12px 32px rgba(49,217,140,.28);
+    }
+    .btn-primary:hover { background: var(--signal-press); transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: transparent; color: var(--ink);
+      border: 1px solid rgba(12,35,28,.22);
+      font-weight: 700; font-size: 16px; border-radius: 12px;
+      padding: 15px 26px; transition: var(--transition); white-space: nowrap;
+    }
+    .btn-ghost:hover { border-color: var(--signal); background: rgba(49,217,140,.10); }
+
+    /* ── Section label — mono eyebrow ───────────────── */
+    .section-label {
+      display: inline-block; font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+      letter-spacing: 0.10em; text-transform: uppercase; color: var(--signal-deep);
+    }
+    /* ── Contextual accent & muted ─────────────────────
+       The same markup sits on Mist paper and inside Ink bands, and the accessible
+       colour differs by ground. `.on-ink` on a section flips both. */
+    .text-accent { color: var(--signal-deep); }   /* 4.69:1 on Mist */
+    .text-soft   { color: var(--sage-text); }     /* 4.66:1 on Mist */
+    .text-softer { color: var(--sage); }          /* large/decorative only */
+
+    .on-ink                 { background: var(--ink); color: var(--mist); }
+    .on-ink .section-label  { color: var(--signal); }   /* 8.98:1 on Ink */
+    .on-ink .text-accent    { color: var(--signal); }
+    .on-ink .text-soft      { color: var(--sage-on-ink); } /* 4.67:1 on Ink */
+    .on-ink .text-softer    { color: var(--sage-on-ink); }
+    .on-ink .btn-ghost      { color: var(--mist); border-color: rgba(242,247,243,.28); }
+    .on-ink .btn-ghost:hover{ border-color: var(--signal); background: rgba(49,217,140,.12); }
+    .on-ink .card-panel     { background: rgba(242,247,243,.06); border-color: rgba(242,247,243,.14); box-shadow: none; }
+    .on-ink .card-panel:hover { border-color: rgba(49,217,140,.55); }
+
+    /* ── Panel card ────────────────────────────────── */
+    /* White card on Mist paper with an Ink hairline — the deck's own card recipe. */
+    .card-panel {
+      background: var(--white);
+      border: 1px solid rgba(12,35,28,.08);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(12,35,28,.06);
+      transition: var(--transition);
+    }
+    .card-panel:hover {
+      border-color: rgba(49,217,140,.55); transform: translateY(-4px);
+      box-shadow: 0 18px 44px rgba(12,35,28,.10);
+    }
+
+    /* ── Form inputs ───────────────────────────────── */
+    .form-input {
+      width: 100%; border: 1px solid rgba(12,35,28,.16); border-radius: 10px;
+      padding: 13px 16px; font-family: var(--font); font-size: 16px;
+      color: var(--ink); background: var(--white);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease; outline: none;
+    }
+    .form-input:focus { border-color: var(--signal); box-shadow: 0 0 0 3px rgba(49,217,140,.22); }
+    .form-input::placeholder { color: var(--sage-text); }
+
+    /* ── FAQ / accordion ───────────────────────────── */
+    .faq-item { background: var(--white); border: 1px solid rgba(12,35,28,.08); border-radius: 14px; overflow: hidden; transition: border-color .25s ease, box-shadow .25s ease, background .25s ease; }
+    .faq-item:hover { border-color: rgba(49,217,140,.55); box-shadow: 0 0 0 1px rgba(49,217,140,.28), 0 14px 34px rgba(12,35,28,.08); }
+
+    /* "What happens next?" panel — outline frame on hover */
+    .next-panel { transition: border-color .25s ease, box-shadow .25s ease; }
+    .next-panel:hover { border-color: rgba(49,217,140,.55) !important; box-shadow: 0 0 0 1px rgba(49,217,140,.3), 0 14px 34px rgba(0,0,0,.28); }
+
+    /* ── WhatsApp float (keep WhatsApp brand green) ── */
+    .wa-float {
+      position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+      background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(37,211,102,.4); z-index: 100;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .wa-float:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(37,211,102,.5); }
+
+    /* ── Testimonial carousel (mobile) ─────────────── */
+    .testimonial-track { display: flex; transition: transform 0.35s ease; }
+    .testimonial-card { flex: 0 0 100%; }
+
+    /* Hero phone — the PNG already carries its own rounded green panel and a
+       transparent margin around it. A box-shadow/border-radius here would trace that
+       outer transparent box instead, drawing a phantom card around the artwork. */
+    .hero-phone img { width: 100%; height: auto; display: block; }
+    @media (min-width: 1024px) {
+      /* `translate`, not `transform`: .hero-media runs the heroIn entrance, whose final
+         keyframe is `transform: none` — an animated value beats a declared one, so a
+         transform here would silently never apply. */
+      .hero-phone { translate: 0 -40px; }
+    }
+
+    /* ═══════════ TRUSTED-BY LOGO STRIP ═══════════ */
+    /* The client logos ship for different grounds — four are dark artwork, three (SNG,
+       Vitality H2O, Sterk Opad) are white-only and would vanish on Mist. That's why the
+       Featured Brands carousel plates each one on its own colour. Up here the row has to
+       sit quietly under the headline, so instead of seven colour chips every logo is
+       flattened to a single ink silhouette: `brightness(0)` zeroes RGB while leaving
+       alpha alone, so white and navy artwork both resolve to the same mark. This needs
+       every source to carry real transparency — client-mm-inc.webp shipped as lossy RGB
+       (black artwork on an opaque white rectangle, plus a black bar on its top row), so
+       client-mm-inc-alpha.webp is the alpha-derived version used here.
+
+       Hover lifts opacity but keeps the silhouette. Restoring full colour is the usual
+       move here and is deliberately NOT done — it would turn the three white logos
+       invisible against Mist, which is the exact problem the silhouette solves. */
+    .tb-row { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 28px; }
+    .tb-logo {
+      height: var(--h, 30px); width: auto; display: block; flex-shrink: 0;
+      filter: brightness(0); opacity: .55;
+      transition: opacity .3s ease;
+    }
+    .tb-logo:hover { opacity: .95; }
+    /* Wordmarks set in type, held at the same weight as the silhouettes. */
+    .tb-name { font-weight: 700; font-size: 16px; color: var(--ink); opacity: .55; transition: opacity .3s ease; }
+    .tb-name:hover { opacity: .95; }
+
+    @media (max-width: 767px) {
+      .tb-row { gap: 14px 22px; }
+      .tb-logo { height: calc(var(--h, 30px) * .82); }
+      .tb-name { font-size: 15px; }
+    }
+
+    /* Captions laid over a photo scrim: Ink-band text colours without painting a
+       background over the image. .on-ink can't be used here for that reason. */
+    .on-photo                { color: var(--mist); }
+    .on-photo .text-accent   { color: var(--signal); }
+    .on-photo .text-soft     { color: var(--sage-on-ink); }
+    .on-photo .text-softer   { color: var(--sage-on-ink); }
+    /* ═══════════ FEATURED BRANDS CAROUSEL ═══════════ */
+    /* Same three-set loop as the Integrations marquee (shared mqLeft keyframes), but on a
+       perspective plane. `overflow: hidden` stays on .bc-viewport only. */
+    .bc-viewport {
+      overflow: hidden;
+      perspective: 1100px;
+      perspective-origin: 50% 50%;
+      padding: 64px 0 46px;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    }
+    .bc-track {
+      display: flex; width: max-content;
+      transform-style: preserve-3d;
+      animation: mqLeft 28s linear infinite;
+      will-change: transform;
+    }
+    /* Spacing lives on the set, not the track, so the track is exactly 3 × set width and
+       -33.3333% lands on the seam. */
+    /* preserve-3d must be unbroken from the perspective element down to the cards. The
+       <ul> defaulting to `flat` here silently collapsed every rotateY into a 2D squash. */
+    .bc-set { display: flex; gap: 22px; padding: 0 22px 0 0; margin: 0; list-style: none;
+              transform-style: preserve-3d; }
+
+    .bc-card {
+      position: relative; flex-shrink: 0;
+      width: 380px; aspect-ratio: 4 / 3;
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 26px 60px rgba(12,35,28,.24);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+      /* transform + opacity are written per-frame by JS from the card's screen position */
+    }
+    .bc-card > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bc-card::after {           /* lift the plate off busy photography */
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(58% 46% at 50% 50%, rgba(12,35,28,.34), transparent 78%);
+    }
+    .bc-plate {
+      position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 2;
+      background: var(--plate, var(--white)); border-radius: 16px;
+      padding: 20px 26px; min-width: 172px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 12px 30px rgba(12,35,28,.28);
+    }
+    /* The marks range from near-square to a 5:1 lockup, so each carries its own
+       display size (normalised to roughly equal optical area) via --lw/--lh. */
+    .bc-plate img { width: var(--lw, 120px); height: var(--lh, 46px); object-fit: contain; display: block; }
+
+    @media (max-width: 768px) {
+      .bc-card { width: 268px; border-radius: 18px; }
+      .bc-plate { padding: 14px 18px; min-width: 128px; border-radius: 12px; }
+      .bc-plate img { width: calc(var(--lw, 120px) * .72); height: calc(var(--lh, 46px) * .72); }
+      .bc-set { gap: 14px; padding-right: 14px; }
+      .bc-viewport { padding: 44px 0 30px; }
+    }
+
+    /* ═══════════ INTEGRATIONS MARQUEE ═══════════ */
+    /* Two rows drifting in opposite directions. Each track renders its list TWICE and
+       translates by exactly -50%, so the wrap point is seamless.
+
+       Uses `transform`, not the standalone scale/translate properties. */
+    @keyframes mqLeft  { from { transform: translateX(0); }          to { transform: translateX(-33.3333%); } }
+    @keyframes mqRight { from { transform: translateX(-33.3333%); }  to { transform: translateX(0); } }
+
+    .mq-row {
+      overflow: hidden;
+      /* dissolve at both ends instead of a hard cut */
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+    }
+    /* No gap on the track: each set carries its own trailing gap via padding-right, so
+       the track is exactly 2 × set-width and -50% lands on the seam precisely. A gap
+       here would offset the wrap by half a gap and the loop would visibly drift. */
+    .mq-track { display: flex; width: max-content; will-change: transform; }
+    .mq-set {
+      display: flex; gap: 14px; padding: 0 14px 0 0; margin: 0; list-style: none;
+    }
+    /* Duration sets the speed: one set is ~1527px, so 88s ≈ 17px/s — a slow drift rather
+       than a scroll. Raise the seconds to slow it further, lower to speed it up. The two
+       rows stay on different durations so they never fall into sync. */
+    .mq-a .mq-track { animation: mqLeft  88s  linear infinite; }
+    .mq-b .mq-track { animation: mqRight 104s linear infinite; }
+    .mq-row:hover .mq-track,
+    .mq-row:focus-within .mq-track { animation-play-state: paused; }
+
+    .mq-chip {
+      display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
+      background: var(--white); border: 1px solid rgba(12,35,28,.08);
+      border-radius: 100px; padding: 13px 22px;
+      box-shadow: 0 2px 10px rgba(12,35,28,.04);
+      transition: border-color .25s ease, box-shadow .25s ease, color .25s ease;
+    }
+    .mq-chip:hover { border-color: rgba(49,217,140,.55); box-shadow: 0 8px 22px rgba(12,35,28,.10); }
+    /* Logos ship pre-rendered as Deep Ink monochrome (watermarks stripped, trimmed and
+       normalised to a common cap height), so no runtime filter is needed. Height is
+       capped and width bounded so wide wordmarks and compact marks read at similar
+       optical weight. */
+    .mq-chip img {
+      height: 26px; width: auto; max-width: 132px;
+      object-fit: contain; display: block;
+      opacity: .82; transition: opacity .25s ease;
+    }
+    .mq-chip:hover img { opacity: 1; }
+
+    @media (max-width: 640px) {
+      .mq-chip { padding: 11px 17px; gap: 8px; }
+      .mq-chip img { height: 22px; max-width: 108px; }
+      .mq-set { gap: 10px; padding-right: 10px; }
+    }
+
+    /* ═══════════ MOTION LAYER ═══════════ */
+    @keyframes heroIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+    @keyframes sheen   { from { left: -120%; } to { left: 140%; } }
+    @keyframes wapulse { 0% { box-shadow: 0 4px 16px rgba(37,211,102,.4), 0 0 0 0 rgba(37,211,102,.5); } 70% { box-shadow: 0 4px 16px rgba(37,211,102,.4), 0 0 0 16px rgba(37,211,102,0); } 100% { box-shadow: 0 4px 16px rgba(37,211,102,.4), 0 0 0 0 rgba(37,211,102,0); } }
+
+    /* Scroll progress bar */
+    #scrollbar { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, #8fc45f, #31D98C); z-index: 300; transition: width .1s linear; }
+
+    /* Hero staggered entrance (runs on load; .js set before first paint = no flash) */
+    .js #hero .hero-copy > * { opacity: 0; animation: heroIn .7s cubic-bezier(.2,.7,.2,1) forwards; }
+    .js #hero .hero-copy > *:nth-child(1) { animation-delay: .06s; }
+    .js #hero .hero-copy > *:nth-child(2) { animation-delay: .14s; }
+    .js #hero .hero-copy > *:nth-child(3) { animation-delay: .22s; }
+    .js #hero .hero-copy > *:nth-child(4) { animation-delay: .30s; }
+    .js #hero .hero-copy > *:nth-child(5) { animation-delay: .38s; }
+    .js #hero .hero-media { opacity: 0; animation: heroIn .85s .28s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    /* Featured work cards — lift on hover (combined transition keeps the scroll-reveal entrance) */
+    #work .work-card { transition: opacity .7s cubic-bezier(.2,.7,.2,1), translate .7s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
+    #work .work-card img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    #work .work-card:hover { transform: translateY(-14px) scale(1.015); box-shadow: 0 44px 100px rgba(0,0,0,.6) !important; }
+    #work .work-card:hover img { transform: scale(1.06); }
+
+    /* Owner stories — lift on hover (matches hero/work) */
+    #stories .story-card, #stories .story-photo { transition: opacity .7s cubic-bezier(.2,.7,.2,1), translate .7s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
+    #stories .story-photo img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    #stories .story-card:hover, #stories .story-photo:hover { transform: translateY(-14px) scale(1.012); box-shadow: 0 44px 100px rgba(0,0,0,.55) !important; }
+    #stories .story-photo:hover img { transform: scale(1.06); }
+
+    /* ── Services — full-width product tiles ──────────────────────
+       Monochrome by design. An earlier pass gave each tile its own product hue, but
+       those five colours were only ever specced as 14px dots, and four of them
+       (#F5C34B/#4BA3F5/#F58B4B/#B26BF0) appear nowhere in Brand Guidelines V1.0 —
+       promoting them to full-height rails and panel washes turned the section into a
+       rainbow the rest of the page never answers. Rails and washes are Signal Green,
+       used as a FILL exactly as the token intends; the products are told apart by
+       number and name. Copy stays --sage-text: green is 1.69:1 on Mist, never text.
+
+       Two scroll progress values, both written per tile by the rAF loop at the foot of
+       the page, both inheriting so children can read them:
+         --p  the tile itself — lies back in 3D, blurred and thrown off-axis, then swings
+              upright into focus.
+         --q  the contents — a deliberately late remap of --p, so copy and rail arrive
+              only once the tile has landed. That lag is what makes it read as two beats
+              rather than one lump.
+       --dir alternates ±1 per tile so consecutive tiles enter from opposite sides. */
+    @property --p   { syntax: '<number>'; initial-value: 0; inherits: true; }
+    @property --q   { syntax: '<number>'; initial-value: 0; inherits: true; }
+    @property --dir { syntax: '<number>'; initial-value: 1; inherits: true; }
+
+    .svc-stack { display: grid; gap: 18px; }
+    /* Perspective per slot, not on the stack: one shared vanishing point across a
+       1000px-tall column would shear the top and bottom tiles badly. */
+    .svc-slot  { perspective: 1100px; }
+
+    .svc-tile {
+      position: relative; overflow: hidden; isolation: isolate;
+      display: grid; align-items: center; gap: 6px 32px;
+      grid-template-columns: 62px minmax(0,.85fr) minmax(0,1.05fr) 40px;
+      padding: 42px 38px;
+      background: var(--white);
+      border: 1px solid rgba(12,35,28,.08);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(12,35,28,.06);
+      text-decoration: none; color: inherit;
+      transform-origin: 50% 130%;      /* pivot below the tile — it swings up, not over */
+      transition: transform .4s cubic-bezier(.2,.7,.2,1), border-color .4s ease, box-shadow .4s ease;
+    }
+    .svc-tile::before {              /* colour wash — opacity driven by scroll progress */
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background: rgba(49,217,140,.06); opacity: 0; pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    .svc-rail {                      /* left colour rail — height driven by scroll progress */
+      position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+      background: var(--signal); transform-origin: 50% 100%; transform: scaleY(1);
+      transition: width .35s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .svc-num    { font-family: var(--font-mono); font-size: 19px; color: rgba(12,35,28,.26); align-self: center; letter-spacing: -.01em; }
+    .svc-kicker { display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--sage-text); margin-bottom: 12px; }
+    .svc-name   { font-size: clamp(26px, 3.4vw, 40px); font-weight: 700; text-transform: lowercase; letter-spacing: -.02em; margin: 0; line-height: 1.05; }
+    .svc-name span { color: var(--sage-text); }
+    .svc-desc   { font-size: 16px; line-height: 1.65; color: var(--sage-text); margin: 0; }
+    .svc-arrow  { justify-self: end; font-size: 26px; color: var(--signal-deep); transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+
+    /* Detail tile — one service spells out what it includes, so the tile runs two
+       rows. The number, name and arrow span both so they stay centred against the
+       taller card instead of hugging the first row. */
+    .svc-tile.has-detail .svc-num,
+    .svc-tile.has-detail .svc-id,
+    .svc-tile.has-detail .svc-arrow { grid-row: 1 / -1; }
+    .svc-tile.has-detail .svc-desc  { grid-column: 3; grid-row: 1; align-self: end; }
+    .svc-more   { grid-column: 3; grid-row: 2; display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+    .svc-label  { display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--sage-text); margin-bottom: 6px; }
+    .svc-lead   { display: block; font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--ink); }
+    .svc-tags   { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+    .svc-tags li {
+      font-size: 13px; line-height: 1; color: var(--sage-text);
+      padding: 7px 12px; border-radius: 999px;
+      background: rgba(12,35,28,.04); border: 1px solid rgba(12,35,28,.08);
+    }
+    .svc-key    { font-size: 15px; line-height: 1.5; color: var(--ink); margin: 0; padding-left: 14px; border-left: 3px solid var(--signal); }
+    /* Ordered chain. The arrow lives on the separator, not on each step, so the
+       row can wrap mid-sequence without stranding an arrow at the end of a line. */
+    .svc-flow   { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; list-style: none; margin: 0; padding: 0; }
+    .svc-flow li { font-family: var(--font-mono); font-size: 13px; letter-spacing: -.01em; color: var(--ink); }
+    .svc-flow li + li::before { content: '→'; color: var(--signal-deep); margin-right: 10px; }
+
+    .svc-tile:hover, .svc-tile:focus-visible {
+      transform: translateY(-10px);
+      border-color: rgba(49,217,140,.55);
+      box-shadow: 0 34px 70px rgba(12,35,28,.16);
+    }
+    .svc-tile:hover::before, .svc-tile:focus-visible::before { opacity: 1; }
+    .svc-tile:hover .svc-rail, .svc-tile:focus-visible .svc-rail { width: 14px; }
+    .svc-tile:hover .svc-arrow, .svc-tile:focus-visible .svc-arrow { transform: translateX(12px); }
+
+    /* Scroll-linked bindings.
+       Everything here rides the individual transform properties (translate/rotate/scale),
+       which compose with — and never clobber — the `transform` the hover state owns.
+       No transitions on these: the rAF loop repaints them every frame, and a transition
+       would smear the scrub into lag. */
+    .js #services .svc-tile {
+      opacity: var(--p);
+      translate: calc(var(--dir) * (1 - var(--p)) * 70px) calc((1 - var(--p)) * 120px);
+      rotate: x calc((1 - var(--p)) * 34deg);
+      scale: calc(.82 + .18 * var(--p));
+      filter: blur(calc((1 - var(--p)) * 7px));
+      will-change: opacity, translate, rotate, scale, filter;
+    }
+    .js #services .svc-tile::before { opacity: calc(var(--q) * .85); }
+    .js #services .svc-rail         { transform: scaleY(var(--q)); }
+
+    /* Second beat — contents arrive after the tile has settled. */
+    .js #services .svc-num,
+    .js #services .svc-id,
+    .js #services .svc-desc,
+    .js #services .svc-more  { opacity: var(--q); translate: 0 calc((1 - var(--q)) * 30px); }
+    .js #services .svc-arrow { opacity: var(--q); translate: calc((1 - var(--q)) * -26px) 0; }
+
+    @media (max-width: 900px) {
+      .svc-tile { grid-template-columns: 1fr auto; padding: 28px 24px; gap: 14px 16px; transform-origin: 50% 115%; }
+      .svc-num  { grid-column: 1; }
+      .svc-id, .svc-desc { grid-column: 1 / -1; }
+      .svc-arrow { grid-column: 2; grid-row: 1; }
+      .svc-tile.has-detail .svc-num,
+      .svc-tile.has-detail .svc-id,
+      .svc-tile.has-detail .svc-arrow { grid-row: auto; }
+      .svc-tile.has-detail .svc-arrow { grid-row: 1; }
+      .svc-tile.has-detail .svc-desc  { grid-column: 1 / -1; grid-row: auto; align-self: auto; }
+      .svc-more { grid-column: 1 / -1; grid-row: auto; margin-top: 2px; }
+      /* Softer on small screens, and no blur — it is the one genuinely expensive
+         property in the set and phones feel it first. */
+      .js #services .svc-tile {
+        translate: calc(var(--dir) * (1 - var(--p)) * 28px) calc((1 - var(--p)) * 64px);
+        rotate: x calc((1 - var(--p)) * 20deg);
+        scale: calc(.9 + .1 * var(--p));
+        filter: none;
+      }
+    }
+
+    /* ═══════════ PROCESS RAIL ═══════════ */
+    /* A dot per step with the connector reaching across the grid's 40px gutter, so
+       01→04 reads as one line rather than four stubs. The step that ends a row has
+       nothing to reach for, so its line fades out instead — which row that is depends
+       on the column count, hence the nth-child rules per breakpoint. */
+    .ps-rail { display: flex; align-items: center; height: 24px; }
+    .ps-dot  {
+      flex: none; width: 13px; height: 13px; border-radius: 50%;
+      background: var(--signal); box-shadow: 0 0 0 5px rgba(49,217,140,.15);
+    }
+    .ps-line { flex: 1; height: 2px; margin-left: 12px; background: linear-gradient(90deg, rgba(49,217,140,.4), transparent); }
+
+    @media (min-width: 640px) {   /* two columns — steps 1 and 3 sit on the left */
+      .ps-step:nth-child(odd) .ps-line { margin-right: -40px; background: rgba(49,217,140,.32); }
+    }
+    @media (min-width: 1024px) {  /* four columns — only step 4 ends the row */
+      .ps-step:nth-child(-n+3) .ps-line { margin-right: -40px; background: rgba(49,217,140,.32); }
+      .ps-step:nth-child(4) .ps-line { margin-right: 0; background: linear-gradient(90deg, rgba(49,217,140,.4), transparent); }
+    }
+
+    /* Scroll reveal — uses the `translate` property so it never fights hover `transform` */
+    .js .reveal { opacity: 0; translate: 0 26px; transition: opacity .7s cubic-bezier(.2,.7,.2,1), translate .7s cubic-bezier(.2,.7,.2,1), transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .js .reveal.is-visible { opacity: 1; translate: 0 0; }
+
+    /* Nav link underline grow */
+    .nav-desktop a { position: relative; }
+    .nav-desktop a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--signal); border-radius: 2px; transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+    .nav-desktop a:hover::after { transform: scaleX(1); }
+
+    /* Primary button sheen */
+    .btn-primary { position: relative; overflow: hidden; }
+    .btn-primary::after { content: ''; position: absolute; top: 0; left: -120%; width: 55%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.5), transparent); transform: skewX(-18deg); pointer-events: none; }
+    .btn-primary:hover::after { animation: sheen .85s ease; }
+
+    /* Footer social dots — icon buttons on the Ink footer. */
+    .social-dot {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--signal); border: 1px solid rgba(255,255,255,.15);
+      transition: border-color .25s ease, background .25s ease, transform .25s ease;
+    }
+    .social-dot:hover { border-color: var(--signal); background: rgba(49,217,140,.12); transform: translateY(-2px); }
+
+    /* WhatsApp float pulse */
+    .wa-float { animation: wapulse 2.6s infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .js #hero .hero-copy > *, .js #hero .hero-media, .js .reveal { opacity: 1 !important; translate: none !important; transform: none !important; animation: none !important; }
+      .wa-float { animation: none !important; }
+      #work .work-card:hover, #work .work-card:hover img,
+      #stories .story-card:hover, #stories .story-photo:hover, #stories .story-photo:hover img { transform: none !important; }
+      .btn-primary:hover::after { animation: none !important; }
+
+      /* Services tiles: pinning --p and --q at 1 is what makes skipping the rAF loop
+         safe — rails, washes and copy land at full strength without a frame running. */
+      #services .svc-tile {
+        --p: 1 !important; --q: 1 !important;
+        opacity: 1 !important; translate: none !important; rotate: none !important;
+        scale: none !important; filter: none !important; transform: none !important;
+        will-change: auto !important;
+      }
+      #services .svc-num, #services .svc-id, #services .svc-desc,
+      #services .svc-more, #services .svc-arrow {
+        opacity: 1 !important; translate: none !important;
+      }
+      #services .svc-tile:hover { transform: none !important; }
+      #services .svc-tile:hover .svc-rail { width: 6px !important; }
+      #services .svc-tile:hover .svc-arrow { transform: none !important; }
+      /* Brand carousel: stop the drift, clear the JS tilt, show each client once. */
+      .bc-track { animation: none !important; width: 100%; justify-content: center; flex-wrap: wrap; }
+      .bc-viewport { overflow: visible; perspective: none; -webkit-mask-image: none; mask-image: none; }
+      .bc-card { transform: none !important; }
+      .bc-set[aria-hidden="true"] { display: none; }
+      .bc-set { flex-wrap: wrap; justify-content: center; padding-right: 0; }
+
+      /* Marquee stops and reflows to a static wrapped list, so all 17 tools stay readable. */
+      .mq-track { animation: none !important; width: 100%; }
+      .mq-row { overflow: visible; -webkit-mask-image: none; mask-image: none; padding: 0 24px; }
+      .mq-set { flex-wrap: wrap; justify-content: center; padding-right: 0; }
+      .mq-set[aria-hidden="true"] { display: none; }   /* one copy is enough when static */
+      .mq-b { display: none; }   /* both rows carry all ten, so one row is the full set */
+      #scrollbar { display: none; }
+    }
+  </style>
+</head>
+
+<body class="bg-mist text-ink">
+
+  <div id="scrollbar"></div>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav
+    id="main-nav"
+    x-data="{ open: false }"
+    class="fixed top-0 left-0 right-0 z-50 border-b"
+    style="background: rgba(242,247,243,.72); backdrop-filter: blur(18px); border-color: rgba(12,35,28,.08);"
+  >
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8">
+      <div class="flex items-center justify-between h-[72px]">
+
+        <!-- Header uses the wordmark alone; the tile mark still carries the identity in
+             the footer and favicon (Brand Guidelines V1.0 §02 colour variants). -->
+        <a href="#" class="flex items-center flex-shrink-0" aria-label="Vuka Online — home">
+          <span class="font-heading font-bold text-[32px] leading-none tracking-[-0.02em] text-ink">vuka<span class="text-accent">.</span></span>
+        </a>
+
+        <!-- Desktop links -->
+        <div class="nav-desktop hidden md:flex items-center gap-9 text-[15px] font-medium">
+          <a href="#hero" class="text-ink hover:text-accent transition-colors">Home</a>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">Services</a>
+          <a href="#work" class="text-soft hover:text-accent transition-colors">Work</a>
+          <a href="#stories" class="text-soft hover:text-accent transition-colors">Stories</a>
+        </div>
+
+        <a href="#contact" class="hidden md:inline-flex btn-primary !py-[11px] !px-[22px] !text-[15px] !shadow-none">Book a Call →</a>
+
+        <!-- Mobile hamburger -->
+        <button
+          @click="open = !open"
+          class="md:hidden flex flex-col gap-[5px] p-2 focus:outline-none"
+          aria-label="Toggle menu"
+        >
+          <span class="block w-6 h-[2px] bg-ink transition-all duration-200" :class="open ? 'rotate-45 translate-y-[7px]' : ''"></span>
+          <span class="block w-6 h-[2px] bg-ink transition-all duration-200" :class="open ? 'opacity-0' : ''"></span>
+          <span class="block w-6 h-[2px] bg-ink transition-all duration-200" :class="open ? '-rotate-45 -translate-y-[7px]' : ''"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div
+      x-show="open"
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 -translate-y-2"
+      x-transition:enter-end="opacity-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-150"
+      x-transition:leave-start="opacity-100 translate-y-0"
+      x-transition:leave-end="opacity-0 -translate-y-2"
+      class="md:hidden border-t"
+      style="background:#F2F7F3; border-color: rgba(12,35,28,.10); display: none;"
+    >
+      <div class="px-6 py-6 flex flex-col gap-5">
+        <a @click="open = false" href="#services" class="font-medium text-[17px] text-ink">Services</a>
+        <a @click="open = false" href="#work" class="font-medium text-[17px] text-ink">Work</a>
+        <a @click="open = false" href="#stories" class="font-medium text-[17px] text-ink">Stories</a>
+        <a @click="open = false" href="#contact" class="btn-primary w-full mt-1">Book a Call →</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero" class="pt-[72px]" style="background: radial-gradient(980px 540px at 78% 3%, rgba(49,217,140,.10), transparent 62%), var(--mist);">
+
+    <!-- Copy + phone -->
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-14 pb-5 md:pt-[80px] md:pb-6">
+      <div class="grid lg:grid-cols-[1.14fr_.86fr] gap-10 lg:gap-12 items-center">
+      <div class="hero-copy flex flex-col gap-6 md:gap-7">
+        <span class="section-label self-start">Discoverable · Trusted · Accessible</span>
+
+        <h1 class="h-hero font-heading font-bold m-0">
+          Wake up your business. <br class="brk"><span class="text-accent">Your craft deserves an audience.</span>
+        </h1>
+
+        <p class="text-soft m-0" style="font-size: clamp(17px, 2vw, 21px); line-height: 1.55; max-width: 560px;">
+          You’ve built something worth sharing. We build the digital foundation that helps the right customers find you, trust you, and do business with you — wherever they are.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#contact" class="btn-primary !text-[17px] !px-7">See how we can help <span>→</span></a>
+          <a href="#work" class="btn-ghost !text-[17px] !px-7">See our work <span class="text-accent">→</span></a>
+        </div>
+
+        <div class="mt-1 flex flex-col gap-3.5">
+          <div class="text-[12px] font-bold tracking-[0.25em] text-soft">BUSINESSES BUILDING WITH VUKA</div>
+          <!-- Heights are tuned per logo, not shared: all seven files are 160px tall
+               natively but run 0.75–5.00 in aspect, so a single CSS height would leave
+               the wordmarks enormous and the upright marks tiny. -->
+          <div class="tb-row">
+            <img class="tb-logo" src="assets/logos/client-mm-inc-alpha.webp" alt="MM Incorporated" width="93" height="18" style="--h:18px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-sng.webp" alt="SNG Financials" width="65" height="19" style="--h:19px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency" width="47" height="29" style="--h:29px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment" width="41" height="29" style="--h:29px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-lnk.webp" alt="LNK Creatives" width="40" height="29" style="--h:29px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O" width="29" height="29" style="--h:29px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit" width="25" height="33" style="--h:33px" decoding="async" />
+            <span class="tb-name italic">Atelier Nou</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone: a storefront in the customer's hand -->
+      <div class="hero-media hero-phone">
+        <img src="assets/photos/hero-phone.webp"
+             alt="A customer browsing a Vuka-built online store on their phone"
+             width="1200" height="800" fetchpriority="high" decoding="async" />
+      </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       FEATURED BRANDS
+  ============================================================ -->
+  <section id="brands" style="border-top:1px solid rgba(12,35,28,.08);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-8 md:pt-10 pb-4 text-center">
+      <div class="section-label mb-5">Featured brands</div>
+      <h2 class="h-sec font-heading font-bold m-0 mb-4">
+        Businesses we've put <span class="text-accent">on the map.</span>
+      </h2>
+      <p class="text-[17px] leading-relaxed text-soft m-0 mx-auto" style="max-width:560px;">
+        From first idea to online presence — we’re helping ambitious businesses take their next step.
+      </p>
+    </div>
+
+    <div class="bc-viewport pb-16 md:pb-20">
+      <div class="bc-track">
+          <ul class="bc-set" aria-label="Brands we have built for">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
+          <ul class="bc-set" aria-hidden="true">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
+          <ul class="bc-set" aria-hidden="true">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROBLEM BAND
+  ============================================================ -->
+  <section class="relative overflow-hidden on-ink" style="min-height:420px;">
+    <img src="assets/photos/band-joburg.webp" alt="Small businesses lining a Johannesburg street" class="absolute inset-0 w-full h-full object-cover" style="object-position:center 20%;" loading="lazy" />
+    <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(12,35,28,.96) 25%, rgba(12,35,28,.55) 70%, rgba(12,35,28,.25));"></div>
+    <div class="relative z-[2] max-w-[1280px] mx-auto px-6 md:px-8 flex flex-col justify-center gap-6" style="min-height:420px;padding-top:64px;padding-bottom:64px;">
+      <div class="flex flex-col gap-4">
+        <div class="section-label">The problem we’re fighting</div>
+        <h2 class="h-band font-heading font-bold m-0" style="max-width:640px;">
+          <span class="text-accent">Business invisibility.</span>
+        </h2>
+      </div>
+
+      <p class="text-[17px] leading-relaxed text-soft m-0" style="max-width:560px;">
+        Somewhere right now, someone is looking for what you do. But if they can’t find you, they can’t choose you.
+      </p>
+
+      <p class="font-heading font-bold m-0" style="font-size:clamp(20px,2.4vw,26px);line-height:1.3;max-width:560px;">
+        Your customers are searching. <br class="brk">Make sure they find you.
+      </p>
+
+      <a href="#services" class="btn-ghost self-start" style="backdrop-filter:blur(8px);">How we help <span class="text-accent">→</span></a>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SERVICES
+  ============================================================ -->
+  <section id="services" class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-28">
+    <div class="section-label mb-5">What we do</div>
+    <h2 class="h-sec font-heading font-bold m-0 mb-4" style="max-width:820px;">
+      One mission. <span class="text-accent" style="border-bottom:4px solid #31D98C;">Five ways</span> to grow your business.
+    </h2>
+    <p class="text-[17px] leading-relaxed text-soft m-0 mb-12" style="max-width:560px;">
+      Every product serves the same mission: making you discoverable, trusted and accessible.
+    </p>
+
+    <div class="svc-stack">
+
+      <div class="svc-slot">
+        <a href="#contact" class="svc-tile has-detail" style="--dir:-1;">
+          <span class="svc-rail" aria-hidden="true"></span>
+          <span class="svc-num" aria-hidden="true">01</span>
+          <div class="svc-id">
+            <span class="svc-kicker">Websites &amp; ecommerce</span>
+            <h3 class="svc-name">vuka <span>build</span></h3>
+          </div>
+          <div class="svc-desc">
+            <span class="svc-label">Purpose</span>
+            <span class="svc-lead">Your digital foundation.</span>
+          </div>
+          <div class="svc-more">
+            <div>
+              <span class="svc-label">Could include</span>
+              <ul class="svc-tags">
+                <li>Business websites</li>
+                <li>Landing pages</li>
+                <li>Professional profiles</li>
+                <li>Basic ecommerce</li>
+                <li>Domain</li>
+                <li>Business email</li>
+                <li>Hosting</li>
+                <li>Essential integrations</li>
+              </ul>
+            </div>
+            <p class="svc-key">The key is: get the business online properly.</p>
+          </div>
+          <span class="svc-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="svc-slot">
+        <a href="#contact" class="svc-tile has-detail" style="--dir:1;">
+          <span class="svc-rail" aria-hidden="true"></span>
+          <span class="svc-num" aria-hidden="true">02</span>
+          <div class="svc-id">
+            <span class="svc-kicker">Business launch package</span>
+            <h3 class="svc-name">vuka <span>launch</span></h3>
+          </div>
+          <p class="svc-desc">Everything a new business needs to open its doors online — in one move.</p>
+          <div class="svc-more">
+            <div>
+              <span class="svc-label">The path</span>
+              <ol class="svc-flow">
+                <li>Brand</li>
+                <li>Domain</li>
+                <li>Email</li>
+                <li>Website</li>
+                <li>Google</li>
+                <li>WhatsApp</li>
+                <li>Launch</li>
+              </ol>
+            </div>
+          </div>
+          <span class="svc-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="svc-slot">
+        <a href="#contact" class="svc-tile has-detail" style="--dir:-1;">
+          <span class="svc-rail" aria-hidden="true"></span>
+          <span class="svc-num" aria-hidden="true">03</span>
+          <div class="svc-id">
+            <span class="svc-kicker">SEO, marketing &amp; visibility</span>
+            <h3 class="svc-name">vuka <span>growth</span></h3>
+          </div>
+          <p class="svc-desc">Get found by the customers already searching for what you do.</p>
+          <div class="svc-more">
+            <div>
+              <span class="svc-label">The path</span>
+              <ol class="svc-flow">
+                <li>Discoverability</li>
+                <li>Traffic</li>
+                <li>Enquiries</li>
+                <li>Conversion</li>
+                <li>Measurement</li>
+              </ol>
+            </div>
+          </div>
+          <span class="svc-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="svc-slot">
+        <a href="#contact" class="svc-tile" style="--dir:1;">
+          <span class="svc-rail" aria-hidden="true"></span>
+          <span class="svc-num" aria-hidden="true">04</span>
+          <div class="svc-id">
+            <span class="svc-kicker">Online selling &amp; payments</span>
+            <h3 class="svc-name">vuka <span>commerce</span></h3>
+          </div>
+          <p class="svc-desc">Take payments, manage orders and sell beyond your postcode.</p>
+          <span class="svc-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="svc-slot">
+        <a href="#contact" class="svc-tile" style="--dir:-1;">
+          <span class="svc-rail" aria-hidden="true"></span>
+          <span class="svc-num" aria-hidden="true">05</span>
+          <div class="svc-id">
+            <span class="svc-kicker">Automation &amp; AI</span>
+            <h3 class="svc-name">vuka <span>ai</span></h3>
+          </div>
+          <p class="svc-desc">Let technology handle the repetitive work, so you can focus on your customers.</p>
+          <span class="svc-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+    </div>
+
+    <a href="#contact" class="btn-primary mt-12">See how we can help <span>→</span></a>
+  </section>
+
+
+  <!-- ============================================================
+       INTEGRATIONS
+  ============================================================ -->
+  <section id="integrations" style="border-top:1px solid rgba(12,35,28,.08);border-bottom:1px solid rgba(12,35,28,.08);background:linear-gradient(180deg, rgba(12,35,28,.03), transparent);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-16 md:pt-20 pb-10">
+      <div class="section-label mb-5">Integrations</div>
+      <h2 class="h-sec font-heading font-bold m-0 mb-4" style="max-width:820px;">
+        <span class="text-accent">The right tools.</span> Connected properly.
+      </h2>
+      <p class="text-[17px] leading-relaxed text-soft m-0 mb-7" style="max-width:560px;">
+        You don’t need to figure out the technology alone. We recommend the tools that fit
+        your business, set them up and connect them so everything works together.
+      </p>
+      <div class="font-mono text-[11px] uppercase tracking-[0.14em] text-soft">
+        Payments · Commerce · Bookings · Communication · Analytics · Automation
+      </div>
+    </div>
+
+    <div class="pb-16 md:pb-20 flex flex-col gap-3.5">
+      <div class="mq-row mq-a">
+        <div class="mq-track">
+          <ul class="mq-set" aria-label="Payment, storefront and courier services we integrate with">
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+          </ul>
+          <ul class="mq-set" aria-hidden="true">
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+          </ul>
+          <ul class="mq-set" aria-hidden="true">
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mq-row mq-b">
+        <div class="mq-track">
+          <ul class="mq-set" aria-label="More services we integrate with">
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+          </ul>
+          <ul class="mq-set" aria-hidden="true">
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+          </ul>
+          <ul class="mq-set" aria-hidden="true">
+            <li class="mq-chip"><img src="assets/logos/paystack.webp" alt="Paystack" width="132" height="24" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/courier-guy.webp" alt="The Courier Guy" width="74" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/wix.webp" alt="Wix" width="67" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/payfast.webp" alt="PayFast" width="99" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/dpd-laser.webp" alt="DPD Laser" width="85" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/stripe.webp" alt="Stripe" width="63" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/aramex.webp" alt="Aramex" width="132" height="22" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/shopify.webp" alt="Shopify" width="91" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/fastway.webp" alt="Fastway Couriers" width="78" height="26" decoding="async" /></li>
+            <li class="mq-chip"><img src="assets/logos/paypal.webp" alt="PayPal" width="107" height="26" decoding="async" /></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- ============================================================
+       PROCESS
+  ============================================================ -->
+  <section id="process" style="background:linear-gradient(180deg, rgba(12,35,28,.04), transparent);border-top:1px solid rgba(12,35,28,.08);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-24">
+      <div class="section-label mb-5">Our process</div>
+      <h2 class="h-sec font-heading font-bold m-0 mb-14">From idea to impact. <span class="text-accent">The Vuka way.</span></h2>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <div class="ps-step flex flex-col gap-5">
+          <div class="ps-rail">
+            <span class="ps-dot" aria-hidden="true"></span>
+            <span class="ps-line" aria-hidden="true"></span>
+          </div>
+          <div><span class="text-[15px] font-bold text-accent">01</span><span class="text-[24px] font-bold ml-3">Discover</span></div>
+          <div class="text-[16px] leading-relaxed text-soft">We learn about your business, your customers and your goals.</div>
+        </div>
+
+        <div class="ps-step flex flex-col gap-5">
+          <div class="ps-rail">
+            <span class="ps-dot" aria-hidden="true"></span>
+            <span class="ps-line" aria-hidden="true"></span>
+          </div>
+          <div><span class="text-[15px] font-bold text-accent">02</span><span class="text-[24px] font-bold ml-3">Plan</span></div>
+          <div class="text-[16px] leading-relaxed text-soft">We map what your business needs to get found, trusted and chosen.</div>
+        </div>
+
+        <div class="ps-step flex flex-col gap-5">
+          <div class="ps-rail">
+            <span class="ps-dot" aria-hidden="true"></span>
+            <span class="ps-line" aria-hidden="true"></span>
+          </div>
+          <div><span class="text-[15px] font-bold text-accent">03</span><span class="text-[24px] font-bold ml-3">Build</span></div>
+          <div class="text-[16px] leading-relaxed text-soft">We design, develop and connect everything your business needs to get online.</div>
+        </div>
+
+        <div class="ps-step flex flex-col gap-5">
+          <div class="ps-rail">
+            <span class="ps-dot" aria-hidden="true"></span>
+            <span class="ps-line" aria-hidden="true"></span>
+          </div>
+          <div><span class="text-[15px] font-bold text-accent">04</span><span class="text-[24px] font-bold ml-3">Launch</span></div>
+          <div class="text-[16px] leading-relaxed text-soft">We launch, optimise and support you as your business grows.</div>
+        </div>
+
+      </div>
+
+      <a href="#contact" class="btn-primary mt-14">Book Your Growth Session <span>→</span></a>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FEATURED WORK
+  ============================================================ -->
+  <section id="work" class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-28">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-12">
+      <div>
+        <div class="section-label mb-5">Featured work</div>
+        <h2 class="h-sec font-heading font-bold m-0">Built to be found. <br class="brk"><span class="text-accent">Designed to grow.</span></h2>
+      </div>
+      <a href="#contact" class="btn-ghost self-start md:self-auto !py-[13px]">Start a Project <span class="text-accent">→</span></a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
+        <img src="assets/photos/work-rouge-rabbit-store.webp" alt="Rouge Rabbit online store product page" width="1200" height="1285" class="w-full block" style="height:420px;object-fit:cover;object-position:top center;" loading="lazy" />
+        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
+        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
+          <div class="text-[13px] font-bold tracking-[2px] text-accent">STREETWEAR</div>
+          <div class="text-[24px] font-bold">Rouge Rabbit</div>
+          <div class="text-[15px] text-soft">Brand Identity &amp; Online Store</div>
+        </div>
+      </div>
+
+      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
+        <img src="assets/photos/work-lnk-store.webp" alt="LNK Creatives online store product page" width="1200" height="1280" class="w-full block" style="height:420px;object-fit:cover;object-position:top center;" loading="lazy" />
+        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
+        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
+          <div class="text-[13px] font-bold tracking-[2px] text-accent">BEAUTY E-COMMERCE</div>
+          <div class="text-[24px] font-bold">LNK Creatives</div>
+          <div class="text-[15px] text-soft">Web Design &amp; Online Store</div>
+        </div>
+      </div>
+
+      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
+        <img src="assets/photos/work-dd-sports-site.webp" alt="D.D Sports Management news page" width="1252" height="638" class="w-full block" style="height:420px;object-fit:cover;object-position:left center;" loading="lazy" />
+        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
+        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
+          <div class="text-[13px] font-bold tracking-[2px] text-accent">SPORTS MANAGEMENT</div>
+          <div class="text-[24px] font-bold">DD Sports Management</div>
+          <div class="text-[15px] text-soft">Digital Platform &amp; Business Website</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       MAKER STORIES
+  ============================================================ -->
+  <section id="stories" style="background:linear-gradient(180deg, transparent, rgba(12,35,28,.04));border-top:1px solid rgba(12,35,28,.08);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-24">
+      <div class="section-label mb-5">Owner stories</div>
+      <h2 class="h-sec font-heading font-bold m-0 mb-12">Real owners. <span class="text-accent">Real growth.</span></h2>
+
+      <!-- Featured story — SterkOpad Entertainment -->
+      <div class="grid md:grid-cols-[1.1fr_.9fr] gap-5 items-stretch mb-6">
+        <div class="story-card flex flex-col justify-between gap-8 p-8 md:p-12" style="background:var(--white);border:1px solid rgba(12,35,28,.08);border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.3);">
+          <div>
+            <div class="section-label mb-5">Featured story</div>
+            <h3 class="font-heading font-bold m-0 mb-5" style="font-size:clamp(24px,2.9vw,34px);line-height:1.2;letter-spacing:-.4px;">Elwin Oggen — <span class="text-accent">Eazy OGee.</span></h3>
+            <p class="text-[16px] leading-relaxed text-soft m-0 mb-4">Eazy OGee is one of Johannesburg’s most authentic voices in Hip-Hop. With a sound rooted in the streets of Joburg and lyrics that reflect real lived experience, Eazy has built a reputation as an artist who doesn’t compromise.</p>
+            <p class="text-[16px] leading-relaxed m-0 mb-5">The website showcases their artists, latest music releases, studio bookings and an apparel store for exclusive SterkOpad apparel.</p>
+            <a href="https://sterkopad.co.za/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-semibold text-[15px] text-accent hover:text-accent-hover transition-colors">sterkopad.co.za <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="flex items-center gap-4">
+            <img src="assets/photos/face-eazy-ogee.webp" alt="Elwin Oggen, known as Eazy OGee" width="320" height="320" class="w-14 h-14 rounded-full object-cover" loading="lazy" />
+            <div><div class="text-[17px] font-bold">Eazy OGee</div><div class="text-[15px] text-soft">Founder, SterkOpad Entertainment</div></div>
+          </div>
+        </div>
+        <div class="story-photo rounded-[20px] overflow-hidden min-h-[280px]" style="border:1px solid rgba(12,35,28,.08);box-shadow:0 18px 50px rgba(0,0,0,.3);">
+          <img src="assets/photos/story-sterkopad.webp" alt="Eazy OGee in SterkOpad apparel" width="1100" height="1100" class="w-full h-full object-cover" style="object-position:center 20%;" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- Three supporting stories -->
+      <div class="grid sm:grid-cols-3 gap-5">
+
+        <div class="story-card card-panel p-7 flex flex-col">
+          <div class="text-accent text-[16px] mb-3">★★★★★</div>
+          <p class="text-[16px] leading-relaxed flex-1 mb-5">The service is top notch I would suggest it to everyone. The staff is so kind and very hands on — I would like to thank them.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-[14px]" style="background:rgba(49,217,140,.16);color:var(--signal-deep);" aria-hidden="true">TL</div>
+            <div><div class="font-semibold text-[14px]">Tamaine Lenton</div><div class="text-[12px] text-soft">Google review</div></div>
+          </div>
+        </div>
+
+        <div class="story-card card-panel p-7 flex flex-col">
+          <div class="text-accent text-[16px] mb-3">★★★★★</div>
+          <p class="text-[16px] leading-relaxed flex-1 mb-5">Vuka Online have been superb with everything — communication and building of the website. They are very proactive when it comes to problem solving.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-[14px]" style="background:rgba(49,217,140,.16);color:var(--signal-deep);" aria-hidden="true">KL</div>
+            <div><div class="font-semibold text-[14px]">Katlego Lesito</div><div class="text-[12px] text-soft">Google review</div></div>
+          </div>
+        </div>
+
+        <div class="story-card card-panel p-7 flex flex-col">
+          <div class="text-accent text-[16px] mb-3">★★★★★</div>
+          <p class="text-[16px] leading-relaxed flex-1 mb-5">I’m genuinely impressed! From start to finish, the service was professional, reliable, and hassle-free. The team was friendly, punctual, and went the extra mile to make sure everything was perfect.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-[14px]" style="background:rgba(49,217,140,.16);color:var(--signal-deep);" aria-hidden="true">DD</div>
+            <div><div class="font-semibold text-[14px]">D.D Sports Management Agency</div><div class="text-[12px] text-soft">Google review</div></div>
+          </div>
+        </div>
+
+      </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section style="border-top:1px solid rgba(12,35,28,.08);">
+    <div class="max-w-[760px] mx-auto px-6 md:px-8 py-20 md:py-24">
+      <div class="text-center mb-12">
+        <div class="section-label mb-4">FAQ</div>
+        <h2 class="h-sec font-heading font-bold m-0">Questions owners ask.</h2>
+      </div>
+
+      <div x-data="{ open: null }" class="flex flex-col gap-3">
+
+        <div class="faq-item">
+          <button @click="open = open === 0 ? null : 0" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">Who do you work with?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 0 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 0" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">Ambitious businesses of every kind — founders, tradespeople, retailers, manufacturers, service businesses. Our customer isn't defined by industry but by intent: someone who has decided to grow, understands digital isn't optional, and is ready to move beyond survival. If that's you, we should talk.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button @click="open = open === 1 ? null : 1" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">Do you only build websites?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 1 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 1" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">No. We build complete digital systems: websites, e-commerce, brand identity, growth automation, SEO and AI. We start with what moves your business forward — not a fixed package.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button @click="open = open === 2 ? null : 2" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">How does working with Vuka begin?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 2 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 2" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">With a free consultation. We learn about your business and goals, then scope the right build. From there we plan, design, develop and launch — and stay on as a partner as you grow.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button @click="open = open === 3 ? null : 3" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">How long does a build take?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 3 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 3" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">It depends on scope. A focused site can move fast; a full commerce or automation system takes longer. We agree on realistic timelines in the consultation — and we don't cut corners to hit a number.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button @click="open = open === 4 ? null : 4" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">Do you offer ongoing support?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 4 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 4" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">Always. We provide partnership, not just delivery. Hosting, performance, updates and growth — we stay in it with you so your systems keep working as your business scales.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button @click="open = open === 5 ? null : 5" class="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none">
+            <span class="font-bold text-[15px]">Where are you based?</span>
+            <span class="font-bold text-[22px] text-accent flex-shrink-0 ml-4 leading-none" style="transition:transform .2s;" :style="open === 5 ? 'transform:rotate(45deg)' : ''">+</span>
+          </button>
+          <div x-show="open === 5" x-transition class="px-6 pb-5" style="display:none;">
+            <p class="text-[15px] text-soft leading-relaxed">We're proudly South African and work with ambitious businesses wherever they are. The mindset is global — Johannesburg, Cape Town, or anywhere you're building something worth noticing.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       CONTACT / LEAD CAPTURE
+  ============================================================ -->
+  <section id="contact" class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-28">
+    <div class="grid md:grid-cols-[1fr_1fr] gap-12 items-start">
+
+      <!-- Left: form -->
+      <div>
+        <div class="section-label mb-4">Book your growth session</div>
+        <h2 class="font-heading font-bold m-0 mb-2.5" style="font-size:clamp(28px,3.4vw,42px);line-height:1.05;letter-spacing:-1px;">Your customers are already searching. <span class="text-accent">Let’s make sure they find you.</span></h2>
+        <p class="text-[16px] text-soft mb-7">Tell us about your business and where you’d like it to go. We’ll reach out, understand your goals and recommend the simplest path to your next milestone.</p>
+
+        <div x-data="contactForm()">
+
+          <!-- Success -->
+          <div x-show="sent" class="rounded-card p-8 text-center" style="background:rgba(49,217,140,.08);border:1px solid rgba(49,217,140,.4);display:none;">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:#31D98C;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0C231C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 class="font-heading font-bold text-[20px] mb-2">We've got your details.</h3>
+            <p class="text-[15px] text-soft">We'll reach out within a few hours to start the conversation.</p>
+          </div>
+
+          <!-- Form -->
+          <form x-show="!sent" @submit.prevent="submitForm" class="flex flex-col gap-4">
+            <div>
+              <label class="block font-medium text-[13px] mb-1.5">Your Name</label>
+              <input x-model="form.name" type="text" name="name" placeholder="e.g. Thandi Mokoena" required class="form-input" />
+            </div>
+            <div>
+              <label class="block font-medium text-[13px] mb-1.5">Business Name</label>
+              <input x-model="form.business" type="text" name="business" placeholder="e.g. Amara Ceramics" required class="form-input" />
+            </div>
+            <div>
+              <label class="block font-medium text-[13px] mb-1.5">Phone Number</label>
+              <input x-model="form.phone" type="tel" name="phone" placeholder="e.g. 082 123 4567" required class="form-input" />
+            </div>
+
+            <p x-show="error" x-text="error" class="text-[13px]" style="color:#ff8b8b;display:none;"></p>
+
+            <button type="submit" class="btn-primary w-full mt-1" :disabled="loading" :class="loading ? 'opacity-70 cursor-not-allowed' : ''">
+              <span x-show="!loading">Book My Growth Session →</span>
+              <span x-show="loading" style="display:none;">Sending...</span>
+            </button>
+          </form>
+
+          <!-- WhatsApp fallback -->
+          <div x-show="!sent" class="mt-5 text-center">
+            <p class="text-[13px] text-soft mb-2">Prefer to chat directly?</p>
+            <a href="https://wa.me/27725554595?text=Hi%20Vuka!%20I%27d%20like%20to%20talk%20about%20growing%20my%20business." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-semibold text-[14px] text-accent hover:text-accent-hover transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: reassurance panel -->
+      <div class="hidden md:block">
+        <div class="next-panel rounded-[20px] p-8 h-full" style="background:var(--white);border:1px solid rgba(12,35,28,.08);">
+          <h3 class="font-heading font-bold text-[20px] mb-6">What happens next?</h3>
+          <div class="flex flex-col gap-5">
+            <div class="flex items-start gap-4">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#31D98C;"><span class="font-bold text-[12px]" style="color:#0C231C;">1</span></div>
+              <div><div class="font-semibold text-[14px] mb-0.5">We reach out</div><div class="text-[13px] text-soft">Usually within a few hours during business hours.</div></div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#31D98C;"><span class="font-bold text-[12px]" style="color:#0C231C;">2</span></div>
+              <div><div class="font-semibold text-[14px] mb-0.5">We understand the business</div><div class="text-[13px] text-soft">A focused conversation about your customers, goals and growth opportunities.</div></div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#31D98C;"><span class="font-bold text-[12px]" style="color:#0C231C;">3</span></div>
+              <div><div class="font-semibold text-[14px] mb-0.5">We map the next milestone</div><div class="text-[13px] text-soft">You’ll leave with clarity on what needs to happen next and how we can help get you there.</div></div>
+            </div>
+          </div>
+          <div class="mt-8 pt-6" style="border-top:1px solid rgba(12,35,28,.1);">
+            <div class="flex flex-col gap-2.5">
+              <span class="text-[13px] text-soft flex items-center gap-2"><span class="text-accent">✓</span> No obligation, no pressure</span>
+              <span class="text-[13px] text-soft flex items-center gap-2"><span class="text-accent">✓</span> Practical advice, not jargon</span>
+              <span class="text-[13px] text-soft flex items-center gap-2"><span class="text-accent">✓</span> A partner focused on growth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="on-ink" style="border-top:1px solid rgba(12,35,28,.4);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-16 pb-10">
+      <div class="grid md:grid-cols-[1.4fr_1fr_1fr_1.3fr] gap-10 md:gap-12">
+
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center gap-3">
+            <svg width="32" height="32" viewBox="0 0 96 96" aria-hidden="true">
+              <rect width="96" height="96" rx="24" fill="#31D98C"></rect>
+              <path d="M24 30 L48 70 L72 30" fill="none" stroke="#0C231C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="48" cy="26" r="7" fill="#0C231C"></circle>
+            </svg>
+            <span class="font-heading font-bold text-[22px] leading-none tracking-[-0.02em]">vuka<span class="text-accent">.</span></span>
+          </div>
+          <div class="text-[15px] leading-relaxed text-soft" style="max-width:260px;">We don't sell websites. We sell growth. Building the digital foundation for ambitious businesses.</div>
+          <div class="flex gap-3">
+            <a href="https://www.facebook.com/profile.php?id=61573346291572" target="_blank" rel="noopener noreferrer" aria-label="Vuka Online on Facebook" class="social-dot">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.412c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/vukaonline" target="_blank" rel="noopener noreferrer" aria-label="Vuka Online on Instagram" class="social-dot">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3.5 text-[15px]">
+          <div class="font-bold text-[16px] mb-1.5">Services</div>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">vuka build</a>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">vuka launch</a>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">vuka growth</a>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">vuka commerce</a>
+          <a href="#services" class="text-soft hover:text-accent transition-colors">vuka ai</a>
+        </div>
+
+        <div class="flex flex-col gap-3.5 text-[15px]">
+          <div class="font-bold text-[16px] mb-1.5">Company</div>
+          <a href="#work" class="text-soft hover:text-accent transition-colors">Our Work</a>
+          <a href="#stories" class="text-soft hover:text-accent transition-colors">Stories</a>
+          <a href="#process" class="text-soft hover:text-accent transition-colors">About Vuka</a>
+          <a href="#contact" class="text-soft hover:text-accent transition-colors">Contact</a>
+          <a href="mailto:hello@vukaonline.co.za" class="text-soft hover:text-accent transition-colors font-mono text-[13px] mt-1.5">hello@vukaonline.co.za</a>
+          <a href="https://wa.me/27725554595?text=Hi%20Vuka!%20I%27d%20like%20to%20talk%20about%20growing%20my%20business." target="_blank" rel="noopener noreferrer" class="text-soft hover:text-accent transition-colors font-mono text-[13px]">072 555 4595</a>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <div class="font-bold text-[16px]">Stay inspired</div>
+          <div class="text-[15px] text-soft">Tips, insights and owner stories straight to your inbox.</div>
+          <form @submit.prevent class="flex gap-2.5">
+            <input type="email" placeholder="Enter your email" class="form-input flex-1 !py-3 !text-[15px]" />
+            <button type="submit" class="btn-primary !px-5 !py-3 !text-[15px] !shadow-none">Subscribe</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-between gap-3 mt-14 pt-7 text-[14px] text-soft" style="border-top:1px solid rgba(255,255,255,.06);">
+        <span>© 2026 Vuka Online. Building the digital foundation for ambitious businesses.</span>
+        <div class="flex gap-7"><a href="#" class="text-soft hover:text-soft transition-colors">Privacy Policy</a><a href="#" class="text-soft hover:text-soft transition-colors">Terms of Service</a></div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       WHATSAPP FLOATING BUTTON
+  ============================================================ -->
+  <a href="https://wa.me/27725554595?text=Hi%20Vuka!%20I%27d%20like%20to%20talk%20about%20growing%20my%20business." target="_blank" rel="noopener noreferrer" class="wa-float" aria-label="Chat on WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // --- Nav scroll shadow ---
+    const nav = document.getElementById('main-nav');
+    const heroSection = document.getElementById('hero');
+    if (nav && heroSection) {
+      const observer = new IntersectionObserver(
+        ([entry]) => { nav.classList.toggle('nav-scrolled', !entry.isIntersecting); },
+        { threshold: 0.1 }
+      );
+      observer.observe(heroSection);
+    }
+
+    // --- Alpine.js contact form component ---
+    function contactForm() {
+      return {
+        form: { name: '', business: '', phone: '' },
+        loading: false,
+        sent: false,
+        error: '',
+        async submitForm() {
+          this.loading = true;
+          this.error = '';
+          try {
+            // ⚠️ Replace 'YOUR_FORM_ID' with your Formspree form ID — https://formspree.io
+            const FORMSPREE_ID = 'YOUR_FORM_ID';
+            const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ name: this.form.name, business: this.form.business, phone: this.form.phone }),
+            });
+            if (res.ok) { this.sent = true; }
+            else { this.error = 'Something went wrong. Please try WhatsApp below.'; }
+          } catch {
+            this.error = 'Could not send. Please try WhatsApp below.';
+          } finally {
+            this.loading = false;
+          }
+        },
+      };
+    }
+  </script>
+
+  <!-- ============================================================
+       MOTION: scroll progress · reveal-on-scroll · count-up
+  ============================================================ -->
+  <script>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* Scroll progress bar */
+      var sb = document.getElementById('scrollbar');
+      if (sb) {
+        var onScroll = function () {
+          var h = document.documentElement;
+          var max = h.scrollHeight - h.clientHeight;
+          sb.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0) + '%';
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      /* Reveal on scroll */
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+      document.querySelectorAll('section:not(#hero) .section-label, section h2').forEach(function (el) {
+        el.classList.add('reveal'); io.observe(el);
+      });
+
+      [
+        ['#process .grid > *', 90],
+        ['#work > .grid > *', 90],
+        ['#stories .items-stretch > *', 120],
+        ['#stories .card-panel', 90],
+        ['.faq-item', 60],
+        ['#contact .grid > *', 120],
+        ['footer .grid > *', 80]
+      ].forEach(function (pair) {
+        document.querySelectorAll(pair[0]).forEach(function (el, i) {
+          el.classList.add('reveal');
+          el.style.transitionDelay = (i * pair[1]) + 'ms';
+          io.observe(el);
+        });
+      });
+
+      /* Services — scroll-linked tile progress.
+         Each tile's --p runs 0→1 as it crosses the lower half of the viewport, and
+         scrubs back down on reverse scroll. CSS maps it to opacity, 3D rotation, lift,
+         lateral throw, scale and blur. --q is the same journey remapped to start at 45%
+         and finish at 90%, so the tile lands before its contents and rail draw in —
+         two beats out of one scroll. Runs only while the section is in view, and not at
+         all under reduced motion, where the media query pins both values at 1. */
+      var svcSlots = document.querySelectorAll('#services .svc-slot');
+      if (svcSlots.length && !reduce) {
+        var svcOn = false, svcReq = null;
+        function svcFrame() {
+          var vh = window.innerHeight, span = vh * 0.55, lead = vh * 0.12;
+          for (var i = 0; i < svcSlots.length; i++) {
+            /* Measure the SLOT, never the tile. getBoundingClientRect() reports the
+               transformed box, so reading the tile would feed its own 120px throw and
+               0.82 scale back into the input that produced them — a jittering loop.
+               The slot is untransformed, so it reports the tile's true layout position.
+               Both values are set here and inherit down to the tile and its contents. */
+            var p = (vh - svcSlots[i].getBoundingClientRect().top - lead) / span;
+            p = p < 0 ? 0 : p > 1 ? 1 : p;
+            var q = (p - 0.45) / 0.45;
+            q = q < 0 ? 0 : q > 1 ? 1 : q;
+            svcSlots[i].style.setProperty('--p', p.toFixed(3));
+            svcSlots[i].style.setProperty('--q', q.toFixed(3));
+          }
+          svcReq = svcOn ? requestAnimationFrame(svcFrame) : null;
+        }
+        new IntersectionObserver(function (es) {
+          svcOn = es[0].isIntersecting;
+          if (svcOn && !svcReq) svcReq = requestAnimationFrame(svcFrame);
+          else if (!svcOn && svcReq) { cancelAnimationFrame(svcReq); svcReq = null; }
+        }, { rootMargin: '200px 0px' }).observe(document.querySelector('#services'));
+        svcFrame();   /* seed once, so a deep-link straight to #services lands correctly */
+      }
+
+      /* Featured brands — per-card 3D tilt.
+         Rotation depends on where a card sits on SCREEN, not on its index, so it can't be
+         a static rotateY. The track's horizontal travel stays a CSS animation; this only
+         writes card transforms, so the two never contend. Runs only while the section is
+         in view, and not at all under reduced motion. */
+      var bcCards = document.querySelectorAll('.bc-card');
+      if (bcCards.length && !reduce) {
+        var MAXDEG = 26, bcOn = false, bcReq = null;
+        function bcFrame() {
+          var vw = window.innerWidth, mid = vw / 2;
+          for (var i = 0; i < bcCards.length; i++) {
+            var r = bcCards[i].getBoundingClientRect();
+            if (r.right < -200 || r.left > vw + 200) continue;
+            var t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / mid));
+            var a = Math.abs(t);
+            /* Coverflow depth: the centre card comes toward the viewer and lifts, the
+               outer cards fall away and turn. Perspective does the scaling — translateZ
+               is what it acts on, so no manual scale() is needed. */
+            var z = (170 - a * 430).toFixed(1);
+            var lift = (-22 * (1 - Math.min(1, a))).toFixed(1);
+            bcCards[i].style.transform =
+              'translate3d(0,' + lift + 'px,' + z + 'px) rotateY(' + (t * -MAXDEG).toFixed(2) + 'deg)';
+            bcCards[i].style.opacity = (1 - Math.min(1, a) * 0.3).toFixed(3);
+          }
+          bcReq = bcOn ? requestAnimationFrame(bcFrame) : null;
+        }
+        new IntersectionObserver(function (es) {
+          bcOn = es[0].isIntersecting;
+          if (bcOn && !bcReq) bcReq = requestAnimationFrame(bcFrame);
+          else if (!bcOn && bcReq) { cancelAnimationFrame(bcReq); bcReq = null; }
+        }, { rootMargin: '120px 0px' }).observe(document.querySelector('#brands'));
+      }
+
+      /* Count-up numbers */
+      function runCount(el) {
+        var target = parseFloat(el.dataset.count);
+        var suffix = el.dataset.suffix || '';
+        if (reduce) { el.textContent = target + suffix; return; }
+        var dur = 1400, start = null;
+        function tick(now) {
+          if (start === null) start = now;
+          var p = Math.min((now - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+      var cio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { runCount(e.target); cio.unobserve(e.target); }
+        });
+      }, { threshold: 0.6 });
+      document.querySelectorAll('[data-count]').forEach(function (el) {
+        if (!reduce) el.textContent = '0' + (el.dataset.suffix || '');
+        cio.observe(el);
+      });
+    })();
+  </script>
+
+</body>
+</html>
