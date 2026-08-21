@@ -10,7 +10,7 @@
   <meta property="og:description" content="We don't sell websites. We sell growth. Be found. Be trusted. Be paid." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vukaonline.co.za" />
-  <meta property="og:image" content="assets/photos/social-capetown.webp" />
+  <meta property="og:image" content="https://vukaonline.co.za/assets/photos/social-capetown.webp" />
   <meta name="theme-color" content="#F2F7F3" />
   <meta name="robots" content="index, follow" />
 
@@ -646,7 +646,7 @@
 
         <!-- Header uses the wordmark alone; the tile mark still carries the identity in
              the footer and favicon (Brand Guidelines V1.0 §02 colour variants). -->
-        <a href="#" class="flex items-center flex-shrink-0" aria-label="Vuka Online — home">
+        <a href="#hero" class="flex items-center flex-shrink-0" aria-label="Vuka Online — home">
           <span class="font-heading font-bold text-[32px] leading-none tracking-[-0.02em] text-ink">vuka<span class="text-accent">.</span></span>
         </a>
 
@@ -1220,6 +1220,10 @@
       </div>
 
     </div>
+
+    <div class="flex justify-center mt-12">
+      <a href="gallery.html" class="btn-ghost !py-[13px]">Browse industry starting points <span class="text-accent">→</span></a>
+    </div>
   </section>
 
 
@@ -1391,6 +1395,8 @@
 
           <!-- Form -->
           <form x-show="!sent" @submit.prevent="submitForm" class="flex flex-col gap-4">
+            <!-- Honeypot: hidden from people, tempting to bots -->
+            <input x-model="botcheck" type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <div>
               <label class="block font-medium text-[13px] mb-1.5">Your Name</label>
               <input x-model="form.name" type="text" name="name" placeholder="e.g. Thandi Mokoena" required class="form-input" />
@@ -1495,6 +1501,7 @@
         <div class="flex flex-col gap-3.5 text-[15px]">
           <div class="font-bold text-[16px] mb-1.5">Company</div>
           <a href="#work" class="text-soft hover:text-accent transition-colors">Our Work</a>
+          <a href="gallery.html" class="text-soft hover:text-accent transition-colors">Starting Points</a>
           <a href="#stories" class="text-soft hover:text-accent transition-colors">Stories</a>
           <a href="#process" class="text-soft hover:text-accent transition-colors">About Vuka</a>
           <a href="#contact" class="text-soft hover:text-accent transition-colors">Contact</a>
@@ -1505,17 +1512,26 @@
         <div class="flex flex-col gap-4">
           <div class="font-bold text-[16px]">Stay inspired</div>
           <div class="text-[15px] text-soft">Tips, insights and owner stories straight to your inbox.</div>
-          <form @submit.prevent class="flex gap-2.5">
-            <input type="email" placeholder="Enter your email" class="form-input flex-1 !py-3 !text-[15px]" />
-            <button type="submit" class="btn-primary !px-5 !py-3 !text-[15px] !shadow-none">Subscribe</button>
-          </form>
+          <div x-data="newsletterForm()">
+            <form x-show="!sent" @submit.prevent="submitForm" class="flex gap-2.5">
+              <!-- Honeypot: hidden from people, tempting to bots -->
+              <input x-model="botcheck" type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <input x-model="email" type="email" name="email" required placeholder="Enter your email" class="form-input flex-1 !py-3 !text-[15px]" />
+              <button type="submit" class="btn-primary !px-5 !py-3 !text-[15px] !shadow-none" :disabled="loading" :class="loading ? 'opacity-70 cursor-not-allowed' : ''">
+                <span x-show="!loading">Subscribe</span>
+                <span x-show="loading" style="display:none;">…</span>
+              </button>
+            </form>
+            <p x-show="sent" class="text-[15px] font-medium" style="color:#31D98C;display:none;">Thanks — you're on the list.</p>
+            <p x-show="error" x-text="error" class="text-[13px] mt-2" style="color:#ff8b8b;display:none;"></p>
+          </div>
         </div>
 
       </div>
 
       <div class="flex flex-col sm:flex-row justify-between gap-3 mt-14 pt-7 text-[14px] text-soft" style="border-top:1px solid rgba(255,255,255,.06);">
         <span>© 2026 Vuka Online. Building the digital foundation for ambitious businesses.</span>
-        <div class="flex gap-7"><a href="#" class="text-soft hover:text-soft transition-colors">Privacy Policy</a><a href="#" class="text-soft hover:text-soft transition-colors">Terms of Service</a></div>
+        <div class="flex gap-7"><a href="privacy.html" class="text-soft hover:text-soft transition-colors">Privacy Policy</a><a href="terms.html" class="text-soft hover:text-soft transition-colors">Terms of Service</a></div>
       </div>
     </div>
   </footer>
@@ -1544,26 +1560,53 @@
       observer.observe(heroSection);
     }
 
+    // --- Web3Forms submission key ---
+    // ⚠️ REPLACE THIS before deploying. Get a key (free, emailed to you, no account
+    //    to create) at https://web3forms.com — enter hello@vukaonline.co.za.
+    //    This is a public submission key; it is safe to ship in client-side HTML.
+    //    Until it is replaced, BOTH forms below fail closed and show the WhatsApp
+    //    fallback rather than silently swallowing a lead.
+    const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY_HERE';
+    const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+
+    async function sendToWeb3Forms(payload) {
+      if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_ACCESS_KEY_HERE') {
+        throw new Error('Web3Forms access key is not configured.');
+      }
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ access_key: WEB3FORMS_KEY, ...payload }),
+      });
+      // Web3Forms reports application-level failures in the body, not just the status.
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) {
+        throw new Error(data.message || 'Submission rejected.');
+      }
+      return data;
+    }
+
     // --- Alpine.js contact form component ---
     function contactForm() {
       return {
         form: { name: '', business: '', phone: '' },
+        botcheck: '',
         loading: false,
         sent: false,
         error: '',
         async submitForm() {
+          if (this.botcheck) { return; }   // honeypot tripped — silently drop
           this.loading = true;
           this.error = '';
           try {
-            // ⚠️ Replace 'YOUR_FORM_ID' with your Formspree form ID — https://formspree.io
-            const FORMSPREE_ID = 'YOUR_FORM_ID';
-            const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify({ name: this.form.name, business: this.form.business, phone: this.form.phone }),
+            await sendToWeb3Forms({
+              subject: 'New growth session request — vukaonline.co.za',
+              from_name: 'Vuka Online website',
+              name: this.form.name,
+              business: this.form.business,
+              phone: this.form.phone,
             });
-            if (res.ok) { this.sent = true; }
-            else { this.error = 'Something went wrong. Please try WhatsApp below.'; }
+            this.sent = true;
           } catch {
             this.error = 'Could not send. Please try WhatsApp below.';
           } finally {
@@ -1572,6 +1615,49 @@
         },
       };
     }
+
+    // --- Alpine.js footer newsletter component ---
+    function newsletterForm() {
+      return {
+        email: '',
+        botcheck: '',
+        loading: false,
+        sent: false,
+        error: '',
+        async submitForm() {
+          if (this.botcheck) { return; }   // honeypot tripped — silently drop
+          this.loading = true;
+          this.error = '';
+          try {
+            await sendToWeb3Forms({
+              subject: 'Newsletter signup — vukaonline.co.za',
+              from_name: 'Vuka Online website',
+              email: this.email,
+            });
+            this.sent = true;
+          } catch {
+            this.error = 'Could not subscribe. Email hello@vukaonline.co.za instead.';
+          } finally {
+            this.loading = false;
+          }
+        },
+      };
+    }
+
+    // --- Legacy anchor mapping ---
+    // The previous site linked to #how-it-works and #pricing. Fragments are never
+    // sent to the server, so no redirect can catch them — remap on arrival.
+    (function () {
+      var legacy = { '#how-it-works': '#process', '#pricing': '#services' };
+      var target = legacy[window.location.hash];
+      if (!target) { return; }
+      var el = document.querySelector(target);
+      if (!el) { return; }
+      history.replaceState(null, '', window.location.pathname + target);
+      window.addEventListener('load', function () {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      });
+    })();
   </script>
 
   <!-- ============================================================
