@@ -69,7 +69,7 @@ Both the contact form and the footer newsletter post to Web3Forms via
 `sendToWeb3Forms()` in `index.html`. The access key lives in one place:
 
 ```js
-const WEB3FORMS_KEY = 'b03c1e3a-55a1-4e9c-ba0c-706e6a861c81';
+const WEB3FORMS_KEY = '0bc7f5c1-8ff9-464c-9b2a-47b605f31caa';
 ```
 
 This is a **public submission key** and is safe to commit. Submissions are
