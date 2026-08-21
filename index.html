@@ -1398,16 +1398,20 @@
             <!-- Honeypot: hidden from people, tempting to bots -->
             <input x-model="botcheck" type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <div>
-              <label class="block font-medium text-[13px] mb-1.5">Your Name</label>
-              <input x-model="form.name" type="text" name="name" placeholder="e.g. Thandi Mokoena" required class="form-input" />
+              <label for="cf-name" class="block font-medium text-[13px] mb-1.5">Your Name</label>
+              <input id="cf-name" x-model="form.name" type="text" name="name" placeholder="e.g. Thandi Mokoena" required autocomplete="name" class="form-input" />
             </div>
             <div>
-              <label class="block font-medium text-[13px] mb-1.5">Business Name</label>
-              <input x-model="form.business" type="text" name="business" placeholder="e.g. Amara Ceramics" required class="form-input" />
+              <label for="cf-email" class="block font-medium text-[13px] mb-1.5">Email Address</label>
+              <input id="cf-email" x-model="form.email" type="email" name="email" placeholder="e.g. thandi@amaraceramics.co.za" required autocomplete="email" class="form-input" />
             </div>
             <div>
-              <label class="block font-medium text-[13px] mb-1.5">Phone Number</label>
-              <input x-model="form.phone" type="tel" name="phone" placeholder="e.g. 082 123 4567" required class="form-input" />
+              <label for="cf-business" class="block font-medium text-[13px] mb-1.5">Business Name</label>
+              <input id="cf-business" x-model="form.business" type="text" name="business" placeholder="e.g. Amara Ceramics" required autocomplete="organization" class="form-input" />
+            </div>
+            <div>
+              <label for="cf-phone" class="block font-medium text-[13px] mb-1.5">Phone Number</label>
+              <input id="cf-phone" x-model="form.phone" type="tel" name="phone" placeholder="e.g. 082 123 4567" required autocomplete="tel" class="form-input" />
             </div>
 
             <p x-show="error" x-text="error" class="text-[13px]" style="color:#ff8b8b;display:none;"></p>
@@ -1589,7 +1593,7 @@
     // --- Alpine.js contact form component ---
     function contactForm() {
       return {
-        form: { name: '', business: '', phone: '' },
+        form: { name: '', email: '', business: '', phone: '' },
         botcheck: '',
         loading: false,
         sent: false,
@@ -1602,7 +1606,11 @@
             await sendToWeb3Forms({
               subject: 'New growth session request — vukaonline.co.za',
               from_name: 'Vuka Online website',
+              // Sets the Reply-To header, so replying in your mail client goes
+              // straight back to the person who filled in the form.
+              replyto: this.form.email,
               name: this.form.name,
+              email: this.form.email,
               business: this.form.business,
               phone: this.form.phone,
             });
@@ -1632,6 +1640,7 @@
             await sendToWeb3Forms({
               subject: 'Newsletter signup — vukaonline.co.za',
               from_name: 'Vuka Online website',
+              replyto: this.email,
               email: this.email,
             });
             this.sent = true;
