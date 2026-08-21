@@ -69,16 +69,24 @@ Both the contact form and the footer newsletter post to Web3Forms via
 `sendToWeb3Forms()` in `index.html`. The access key lives in one place:
 
 ```js
-const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY_HERE';
+const WEB3FORMS_KEY = 'b03c1e3a-55a1-4e9c-ba0c-706e6a861c81';
 ```
 
-Get a key free at [web3forms.com](https://web3forms.com) — you enter an email
-address and the key is sent to you; there is no account to create. The key is a
-public submission key and is safe to commit.
+This is a **public submission key** and is safe to commit. Submissions are
+delivered to `clayton@vukaonline.co.za` — that destination is configured on the
+Web3Forms account, not in this code, so changing where mail lands is done at
+[web3forms.com](https://web3forms.com), not here.
+
+The contact form collects **name, email, business name and phone**, all
+required. Both forms set `replyto`, so replying in your mail client goes
+straight back to the enquirer.
 
 Both forms **fail closed**: if the key is missing or the request is rejected,
 the visitor sees an error pointing at WhatsApp rather than a false success. Each
 form carries a `botcheck` honeypot.
+
+Note the site publicly displays `hello@vukaonline.co.za`, which is a different
+address — make sure it forwards somewhere you read.
 
 ---
 
