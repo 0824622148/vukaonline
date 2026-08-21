@@ -1,128 +1,113 @@
-# Vuka Landing Page
+# Vuka Online — vukaonline.co.za
 
-Production-ready landing page for **Vuka** — South African web design agency.
+The Vuka Online marketing site. Hand-written HTML with Tailwind (Play CDN) and
+Alpine.js from CDN. **No build step** — the source in this folder is what ships.
 
-Built with: HTML5 · Tailwind CSS · Alpine.js · Formspree
+Published by **GitHub Pages** from `main` / root:
+<https://github.com/0824622148/vukaonline>
 
----
-
-## Before You Go Live — 2 Things to Update
-
-### 1. WhatsApp Number
-In `index.html`, find this line and replace `27XXXXXXXXX` with your actual number:
-
-```html
-href="https://wa.me/27XXXXXXXXX?text=..."
-```
-
-Format: `27` + your number without the leading zero.  
-Example: `0821234567` → `27821234567`
+| | |
+|---|---|
+| Live site | <https://vukaonline.co.za> |
+| Preview (always current `main`) | <https://0824622148.github.io/vukaonline/> |
+| Domain registrar / DNS | Afrihost (`ns.dns1.co.za`, `ns.dns2.co.za`, `ns.otherdns.net`, `ns.otherdns.com`) |
+| Email | Zoho (`mx.zoho.com`) — **independent of web hosting** |
+| Forms | [Web3Forms](https://web3forms.com) |
 
 ---
 
-### 2. Formspree (Lead Form → Your Email)
+## Pages
 
-1. Go to [formspree.io](https://formspree.io) and create a free account
-2. Create a new form → copy the form ID (looks like `xabc1234`)
-3. In `index.html`, find this line and replace `YOUR_FORM_ID`:
-
-```js
-const FORMSPREE_ID = 'YOUR_FORM_ID';
-```
-
-Free tier: 50 submissions/month. Paid plans from $10/month for more volume.
+| File | URL | Purpose |
+|---|---|---|
+| `index.html` | `/` | Landing page. Real client work under `#work`. |
+| `gallery.html` | `/gallery.html` | **Starting points** — illustrative designs for *fictional* businesses, labelled "example". Not client work. |
+| `privacy.html` / `terms.html` | `/privacy.html`, `/terms.html` | Legal |
+| `404.html` | any unmatched path | GitHub Pages serves this automatically |
+| `templates/*/index.html` | `/templates/<industry>/` | Redirect stubs for the previous site's URLs → `/gallery.html` |
 
 ---
 
-## Deploy to Netlify (Recommended — Free)
-
-1. Go to [netlify.com](https://netlify.com) → sign up free
-2. Drag and drop the `10_Website/` folder onto the deploy zone
-3. Your site is live instantly on a `*.netlify.app` URL
-4. Add your custom domain (e.g. `vuka.co.za`) in **Site settings → Domain management**
-5. Netlify handles SSL automatically (free)
-
-**Total time to deploy: under 5 minutes.**
-
----
-
-## Deploy to Vercel (Alternative)
-
-1. Go to [vercel.com](https://vercel.com) → sign up free
-2. Click **Add New → Project**
-3. Import from Git or drag the folder
-4. Set Framework Preset to **Other**
-5. Deploy — done
-
----
-
-## For Production (Remove Tailwind CDN)
-
-The Tailwind Play CDN is fine for getting started, but for production you should purge unused styles:
+## Making a change
 
 ```bash
-npm install -D tailwindcss
-npx tailwindcss -i ./input.css -o ./output.css --minify
+cd "c:/Users/Victor/Documents/Web Design Agency/10_Website"
+python -m http.server 8765     # then open http://localhost:8765
 ```
 
-Then replace the CDN `<script>` tag with a `<link>` to the minified CSS file. This reduces CSS from ~3MB to ~5KB.
+Edit, check locally, then:
 
----
-
-## Template Reuse (For Client Sites)
-
-To clone this as a template for a new client:
-
-1. Duplicate `index.html` → rename to `clientname/index.html`
-2. Find/replace these brand tokens at the top of the file:
-   - `#3DBF50` → client's primary colour
-   - `vuka` → client brand name
-   - All copy (headlines, pricing, testimonials) → client-specific content
-3. Update the Formspree ID and WhatsApp number
-4. Deploy to a new Netlify site with the client's domain
-
-**Time to launch a new client site: ~2 hours from template.**
-
----
-
-## SEO Checklist
-
-Before going live:
-
-- [ ] Update `<title>` and `<meta name="description">` with your exact target keywords
-- [ ] Update `og:url` to your actual domain
-- [ ] Submit site to [Google Search Console](https://search.google.com/search-console)
-- [ ] Create a `sitemap.xml` (Netlify plugin available, or use xml-sitemaps.com)
-- [ ] Add Google Analytics — paste your `G-XXXXXXXX` tag into the `<head>`
-
-### Add Google Analytics
-
-```html
-<!-- Paste before </head> -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXX');
-</script>
+```bash
+git add -A
+git commit -m "describe the change"
+git push
 ```
 
-Replace `G-XXXXXXXX` with your Measurement ID from Google Analytics.
+GitHub Pages rebuilds in about a minute. Confirm on the preview URL before
+announcing anything.
+
+### What gets published
+
+This folder holds ~78 MB of raw source material (`Brand activation project/`,
+`assets/New Images/`, `assets/Testimonial Background Images/`, loose `.png`
+originals). `.gitignore` is a **whitelist** — it ignores everything, then
+re-admits only the ~2.6 MB that actually ships. If you add a new image, put it
+in `assets/photos/` or `assets/logos/` as `.webp`, or it will not be published.
+
+Check before pushing:
+
+```bash
+git ls-files | wc -l          # expect ~70
+git ls-files -z | xargs -0 du -ch | tail -1   # expect ~2.6M, never 78M
+```
 
 ---
 
-## Lighthouse Targets
+## Forms
 
-| Metric | Target |
-|--------|--------|
-| Performance | ≥ 90 |
-| Accessibility | ≥ 90 |
-| Best Practices | ≥ 90 |
-| SEO | ≥ 90 |
+Both the contact form and the footer newsletter post to Web3Forms via
+`sendToWeb3Forms()` in `index.html`. The access key lives in one place:
 
-Run Lighthouse in Chrome DevTools → Lighthouse tab → Generate report.
+```js
+const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY_HERE';
+```
+
+Get a key free at [web3forms.com](https://web3forms.com) — you enter an email
+address and the key is sent to you; there is no account to create. The key is a
+public submission key and is safe to commit.
+
+Both forms **fail closed**: if the key is missing or the request is rejected,
+the visitor sees an error pointing at WhatsApp rather than a false success. Each
+form carries a `botcheck` honeypot.
 
 ---
 
-*Vuka — Wake Up. Get Online. Start Growing.*
+## DNS
+
+Only these records point at the website. **Do not change `NS` or `MX`** — the
+`MX` records are what keep `hello@vukaonline.co.za` working, and they are
+unrelated to where the site is hosted.
+
+| Record | Value |
+|---|---|
+| `A` @ | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` |
+| `AAAA` @ | `2606:50c0:8000::153`, `:8001::153`, `:8002::153`, `:8003::153` |
+| `CNAME` www | `0824622148.github.io` |
+
+To roll back to the old Afrihost site, set the `A` record to `102.222.124.12`.
+The previous site remains in `../public_html/` and on the Afrihost server.
+
+---
+
+## Known follow-ups
+
+- **Tailwind Play CDN** (~3 MB) still loads at runtime. Fine for now; purging it
+  means introducing a build step, which this site deliberately avoids.
+- **No analytics.** Nothing is installed. Add a `gtag` snippet to `<head>` if
+  wanted — note the privacy policy currently states we run no analytics cookies,
+  so update that page too.
+- **Company registration number** is not shown on the legal pages.
+
+---
+
+*Vuka Online — Be found. Be trusted. Be paid.*
