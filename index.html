@@ -269,6 +269,29 @@
     .on-photo .text-accent   { color: var(--signal); }
     .on-photo .text-soft     { color: var(--sage-on-ink); }
     .on-photo .text-softer   { color: var(--sage-on-ink); }
+
+    /* ═══════════ PROBLEM BAND ═══════════ */
+    /* The 90deg ramp is calibrated for the desktop layout, where the copy is held to a
+       560px column inside a 1280px container and so sits entirely in the dark quarter.
+       Below the container width that column becomes the full screen width, and the copy
+       runs out past the 70% stop into the thin tail — over the brightest part of the
+       photograph. Measured on the band, "Somewhere right now…" ran at 1.01:1 at 360px. */
+    .band-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(12,35,28,.96) 25%, rgba(12,35,28,.66) 70%, rgba(12,35,28,.46));
+    }
+    @media (max-width: 900px) {
+      /* Vertical ramp instead: with the copy spanning the full width there is no dark
+         side left to bias toward, so the scrim has to hold across the whole line. */
+      .band-scrim {
+        background: linear-gradient(180deg, rgba(12,35,28,.90), rgba(12,35,28,.87) 50%, rgba(12,35,28,.93));
+      }
+    }
+    /* --sage-on-ink is 4.67:1 against *solid* Ink and has no headroom left once a lit
+       building shows through the scrim. Holding it here would need a ~.95 scrim at every
+       stop, which erases the photograph the band exists to show. Lifting the tone instead
+       keeps the image and clears 4.5:1. */
+    .band-problem .text-soft { color: #A9C6B6; }
     /* ═══════════ FEATURED BRANDS CAROUSEL ═══════════ */
     /* Same three-set loop as the Integrations marquee (shared mqLeft keyframes), but on a
        perspective plane. `overflow: hidden` stays on .bc-viewport only. */
@@ -863,9 +886,9 @@
   <!-- ============================================================
        PROBLEM BAND
   ============================================================ -->
-  <section class="relative overflow-hidden on-ink" style="min-height:420px;">
+  <section class="relative overflow-hidden on-ink band-problem" style="min-height:420px;">
     <img src="assets/photos/band-joburg.webp" alt="Small businesses lining a Johannesburg street" class="absolute inset-0 w-full h-full object-cover" style="object-position:center 20%;" loading="lazy" />
-    <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(12,35,28,.96) 25%, rgba(12,35,28,.55) 70%, rgba(12,35,28,.25));"></div>
+    <div class="band-scrim"></div>
     <div class="relative z-[2] max-w-[1280px] mx-auto px-6 md:px-8 flex flex-col justify-center gap-6" style="min-height:420px;padding-top:64px;padding-bottom:64px;">
       <div class="flex flex-col gap-4">
         <div class="section-label">The problem we’re fighting</div>
