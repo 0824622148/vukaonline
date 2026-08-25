@@ -1758,10 +1758,23 @@
         var MAXDEG = 26, bcOn = false, bcReq = null;
         function bcFrame() {
           var vw = window.innerWidth, mid = vw / 2;
+          /* Spread the arc over the card pitch, not the half-viewport. A card is ~26% of
+             the half-viewport at 1440px but ~149% of it at 360px, so dividing by `mid`
+             made a phone advance `t` by ~1.5 per card instead of ~0.56: both neighbours
+             pinned at the ±1.2 clamp with identical transforms, leaving one live card and
+             no gradient. 1.8 × pitch reproduces the desktop step at every width and is a
+             no-op on desktop, where it already resolves to ≈ mid.
+             offsetLeft is layout-only, so the per-frame transforms below cannot feed back
+             into it — and re-reading each frame keeps this correct across phone rotation
+             without a resize listener, in the same layout flush the rects already force. */
+          var pitch = bcCards.length > 1
+            ? Math.abs(bcCards[1].offsetLeft - bcCards[0].offsetLeft)
+            : bcCards[0].offsetWidth;
+          var span = Math.max(mid, pitch * 1.8);
           for (var i = 0; i < bcCards.length; i++) {
             var r = bcCards[i].getBoundingClientRect();
             if (r.right < -200 || r.left > vw + 200) continue;
-            var t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / mid));
+            var t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / span));
             var a = Math.abs(t);
             /* Coverflow depth: the centre card comes toward the viewer and lifts, the
                outer cards fall away and turn. Perspective does the scaling — translateZ
