@@ -221,16 +221,51 @@
     .testimonial-track { display: flex; transition: transform 0.35s ease; }
     .testimonial-card { flex: 0 0 100%; }
 
-    /* Hero phone — the PNG already carries its own rounded green panel and a
-       transparent margin around it. A box-shadow/border-radius here would trace that
-       outer transparent box instead, drawing a phantom card around the artwork. */
-    .hero-phone img { width: 100%; height: auto; display: block; }
-    @media (min-width: 1024px) {
-      /* `translate`, not `transform`: .hero-media runs the heroIn entrance, whose final
-         keyframe is `transform: none` — an animated value beats a declared one, so a
-         transform here would silently never apply. */
-      .hero-phone { translate: 0 -40px; }
+
+    /* =========== HERO: CLIENT MOSAIC =========== */
+    /* Ink hero, copy left, three tile columns right. Each column renders its tiles twice
+       and slides by exactly -50% (plus half a gap via the stack's padding), so the loop
+       is seamless; alternate columns run in opposite directions, and the negative
+       delays stagger them so no two rows of tiles ever line up. */
+    #hero { background: radial-gradient(900px 600px at 20% 0%, rgba(49,217,140,.10), transparent 60%), var(--ink); }
+    .hm-copy-wrap { padding-top: 128px; padding-bottom: 48px; }
+    .hm-wrap { position: relative; height: 420px; margin-bottom: 8px; overflow: hidden;
+               -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+                       mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent); }
+    .hm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 100%; padding: 0 12px; }
+    .hm-col { overflow: visible; min-width: 0; }
+    .hm-stack { display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px;
+                animation: hmUp var(--dur, 48s) var(--delay, 0s) linear infinite; will-change: transform; }
+    .hm-down .hm-stack { animation-name: hmDown; }
+    .hm-wrap:hover .hm-stack { animation-play-state: paused; }
+    @keyframes hmUp   { from { transform: translateY(0); }    to { transform: translateY(-50%); } }
+    @keyframes hmDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+    .hm-tile {
+      position: relative; aspect-ratio: 1 / 1.04; border-radius: 16px; overflow: hidden;
+      background: var(--bg, #143A30);
+      display: flex; align-items: center; justify-content: center;
     }
+    .hm-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+                transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+    .hm-tile:hover .hm-photo { transform: scale(1.06); }
+    .hm-logo { width: 62%; height: 46%; object-fit: contain; display: block; }
+
+    @media (min-width: 1024px) {
+      #hero { min-height: min(100svh, 900px); display: flex; align-items: center; }
+      .hm-wrap { position: absolute; top: 0; bottom: 0; right: 0; left: 52%; height: auto; margin: 0;
+                 -webkit-mask-image: none; mask-image: none; }
+      .hm-grid { gap: 16px; padding: 0; margin-right: -24px; }
+      .hm-stack { gap: 16px; padding-bottom: 16px; }
+      .hm-tile { border-radius: 20px; }
+      .hm-copy-wrap { width: 100%; padding-top: 140px; padding-bottom: 96px; }
+      .hm-copy-wrap .hero-copy { max-width: 46%; }
+    }
+    @media (min-width: 1280px) { .hm-copy-wrap .hero-copy { max-width: 600px; } }
+
+    /* Trusted strip on Ink: same silhouette idea, flipped to Mist. */
+    .on-ink .tb-logo { filter: brightness(0) invert(1); opacity: .6; }
+    .on-ink .tb-logo:hover { opacity: 1; }
+    .on-ink .tb-name { color: var(--mist); opacity: .6; }
 
     /* ═══════════ TRUSTED-BY LOGO STRIP ═══════════ */
     /* The client logos ship for different grounds — four are dark artwork, three (SNG,
@@ -349,6 +384,34 @@
       .bc-viewport { padding: 44px 0 30px; }
     }
 
+    /* =========== FEATURED WORK SHOWCASE =========== */
+    /* Tall project posters drifting right-to-left on an Ink band. Same three-set loop as
+       the brands carousel (track = 3 x set, -33.3333% lands on the seam), minus the 3D
+       tilt: the posters carry their own perspective. Hover pauses the drift; scrolling
+       the page briefly speeds it up (JS raises playbackRate). */
+    .sc-viewport { overflow: hidden; padding: 56px 0 48px; }
+    .sc-track { display: flex; width: max-content; animation: mqLeft 64s linear infinite; will-change: transform; }
+    .sc-viewport:hover .sc-track, .sc-viewport:focus-within .sc-track { animation-play-state: paused; }
+    .sc-set { display: flex; gap: 24px; padding: 0 24px 0 0; margin: 0; list-style: none; }
+    .sc-card { flex-shrink: 0; width: 400px; }
+    .sc-media {
+      aspect-ratio: 3 / 4; border-radius: 24px; overflow: hidden; background: #000;
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+      transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1);
+    }
+    .sc-media img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;
+                    transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+    .sc-card:hover .sc-media { transform: translateY(-10px); box-shadow: 0 40px 90px rgba(0,0,0,.6); }
+    .sc-card:hover .sc-media img { transform: scale(1.04); }
+    .sc-cap { display: flex; flex-direction: column; gap: 4px; padding: 18px 4px 0; }
+    @media (max-width: 768px) {
+      .sc-card { width: 272px; }
+      .sc-media { border-radius: 18px; }
+      .sc-set { gap: 14px; padding-right: 14px; }
+      .sc-viewport { padding: 40px 0 36px; }
+      .sc-track { animation-duration: 48s; }
+    }
+
     /* ═══════════ INTEGRATIONS MARQUEE ═══════════ */
     /* Two rows drifting in opposite directions. Each track renders its list TWICE and
        translates by exactly -50%, so the wrap point is seamless.
@@ -420,11 +483,6 @@
     .js #hero .hero-copy > *:nth-child(5) { animation-delay: .38s; }
     .js #hero .hero-media { opacity: 0; animation: heroIn .85s .28s cubic-bezier(.2,.7,.2,1) forwards; }
 
-    /* Featured work cards — lift on hover (combined transition keeps the scroll-reveal entrance) */
-    #work .work-card { transition: opacity .7s cubic-bezier(.2,.7,.2,1), translate .7s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
-    #work .work-card img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-    #work .work-card:hover { transform: translateY(-14px) scale(1.015); box-shadow: 0 44px 100px rgba(0,0,0,.6) !important; }
-    #work .work-card:hover img { transform: scale(1.06); }
 
     /* Owner stories — lift on hover (matches hero/work) */
     #stories .story-card, #stories .story-photo { transition: opacity .7s cubic-bezier(.2,.7,.2,1), translate .7s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
@@ -614,7 +672,7 @@
     @media (prefers-reduced-motion: reduce) {
       .js #hero .hero-copy > *, .js #hero .hero-media, .js .reveal { opacity: 1 !important; translate: none !important; transform: none !important; animation: none !important; }
       .wa-float { animation: none !important; }
-      #work .work-card:hover, #work .work-card:hover img,
+      .sc-card:hover .sc-media, .sc-card:hover .sc-media img,
       #stories .story-card:hover, #stories .story-photo:hover, #stories .story-photo:hover img { transform: none !important; }
       .btn-primary:hover::after { animation: none !important; }
 
@@ -639,6 +697,13 @@
       .bc-card { transform: none !important; }
       .bc-set[aria-hidden="true"] { display: none; }
       .bc-set { flex-wrap: wrap; justify-content: center; padding-right: 0; }
+      /* Hero mosaic: hold still. */
+      .hm-stack { animation: none !important; }
+      /* Showcase: stop the drift and let the one real set scroll sideways by hand. */
+      .sc-track { animation: none !important; }
+      .sc-viewport { overflow-x: auto; scroll-snap-type: x mandatory; padding-left: 24px; }
+      .sc-card { scroll-snap-align: start; }
+      .sc-set[aria-hidden="true"] { display: none; }
 
       /* Marquee stops and reflows to a static wrapped list, so all 17 tools stay readable. */
       .mq-track { animation: none !important; width: 100%; }
@@ -721,11 +786,9 @@
   <!-- ============================================================
        HERO
   ============================================================ -->
-  <section id="hero" class="pt-[72px]" style="background: radial-gradient(980px 540px at 78% 3%, rgba(49,217,140,.10), transparent 62%), var(--mist);">
+  <section id="hero" class="on-ink relative overflow-hidden">
 
-    <!-- Copy + phone -->
-    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-14 pb-5 md:pt-[80px] md:pb-6">
-      <div class="grid lg:grid-cols-[1.14fr_.86fr] gap-10 lg:gap-12 items-center">
+    <div class="relative z-[2] max-w-[1280px] mx-auto px-6 md:px-8 hm-copy-wrap">
       <div class="hero-copy flex flex-col gap-6 md:gap-7">
         <span class="section-label self-start">Discoverable · Trusted · Accessible</span>
 
@@ -733,7 +796,7 @@
           Wake up your business. <br class="brk"><span class="text-accent">Your craft deserves an audience.</span>
         </h1>
 
-        <p class="text-soft m-0" style="font-size: clamp(17px, 2vw, 21px); line-height: 1.55; max-width: 560px;">
+        <p class="text-soft m-0" style="font-size: clamp(17px, 2vw, 21px); line-height: 1.55; max-width: 520px;">
           You’ve built something worth sharing. We build the digital foundation that helps the right customers find you, trust you, and do business with you — wherever they are.
         </p>
 
@@ -742,7 +805,7 @@
           <a href="#work" class="btn-ghost !text-[17px] !px-7">See our work <span class="text-accent">→</span></a>
         </div>
 
-        <div class="mt-1 flex flex-col gap-3.5">
+        <div class="mt-3 flex flex-col gap-3.5">
           <div class="text-[12px] font-bold tracking-[0.25em] text-soft">BUSINESSES BUILDING WITH VUKA</div>
           <!-- Heights are tuned per logo, not shared: all seven files are 160px tall
                natively but run 0.75–5.00 in aspect, so a single CSS height would leave
@@ -759,13 +822,60 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Phone: a storefront in the customer's hand -->
-      <div class="hero-media hero-phone">
-        <img src="assets/photos/hero-phone.webp"
-             alt="A customer browsing a Vuka-built online store on their phone"
-             width="1200" height="800" fetchpriority="high" decoding="async" />
-      </div>
+    <!-- Client mosaic: three columns drifting in alternate directions, bleeding off the
+         right edge. Decorative only; the same clients are named in the logo strip. -->
+    <div class="hero-media hm-wrap" aria-hidden="true">
+      <div class="hm-grid">
+          <div class="hm-col hm-down" style="--dur:53s;--delay:-6s">
+            <div class="hm-stack">
+              <div class="hm-tile" style="--bg:#3A7255"><img class="hm-logo" src="assets/logos/client-sng.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-lnk.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#F2F7F3"><img class="hm-logo" src="assets/logos/client-rouge-rabbit.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/work-boutique.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#FFFFFF"><img class="hm-logo" src="assets/logos/client-dd-sports.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/tile-shaheeds-bunny.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#3A7255"><img class="hm-logo" src="assets/logos/client-sng.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-lnk.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#F2F7F3"><img class="hm-logo" src="assets/logos/client-rouge-rabbit.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/work-boutique.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#FFFFFF"><img class="hm-logo" src="assets/logos/client-dd-sports.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/tile-shaheeds-bunny.webp" alt="" decoding="async" /></div>
+            </div>
+          </div>
+          <div class="hm-col hm-up" style="--dur:62s;--delay:-21s">
+            <div class="hm-stack">
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-dd-sports.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#DC2F3E"><img class="hm-logo" src="assets/logos/client-sterk-opad.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/customer-shopping.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#60A6A6"><img class="hm-logo" src="assets/logos/client-lnk.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-vitality-h2o.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#0B0B0B"><img class="hm-logo" src="assets/logos/client-galactico.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-dd-sports.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#DC2F3E"><img class="hm-logo" src="assets/logos/client-sterk-opad.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/customer-shopping.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#60A6A6"><img class="hm-logo" src="assets/logos/client-lnk.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-vitality-h2o.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#0B0B0B"><img class="hm-logo" src="assets/logos/client-galactico.webp" alt="" decoding="async" /></div>
+            </div>
+          </div>
+          <div class="hm-col hm-down" style="--dur:58s;--delay:-30s">
+            <div class="hm-stack">
+              <div class="hm-tile" style="--bg:#0E2F73"><img class="hm-logo" src="assets/logos/client-vitality-h2o.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-rouge-rabbit.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#FFFFFF"><img class="hm-logo" src="assets/logos/client-mm-inc-alpha.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-sterk-opad.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#111111"><img class="hm-logo" src="assets/logos/client-shaheeds.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/tile-galactico-run.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#0E2F73"><img class="hm-logo" src="assets/logos/client-vitality-h2o.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-rouge-rabbit.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#FFFFFF"><img class="hm-logo" src="assets/logos/client-mm-inc-alpha.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/brand-sterk-opad.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile" style="--bg:#111111"><img class="hm-logo" src="assets/logos/client-shaheeds.webp" alt="" decoding="async" /></div>
+              <div class="hm-tile"><img class="hm-photo" src="assets/photos/tile-galactico-run.webp" alt="" decoding="async" /></div>
+            </div>
+          </div>
       </div>
     </div>
 
@@ -773,112 +883,200 @@
 
 
   <!-- ============================================================
-       FEATURED BRANDS
+       FEATURED WORK
   ============================================================ -->
-  <section id="brands" style="border-top:1px solid rgba(12,35,28,.08);">
-    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-8 md:pt-10 pb-4 text-center">
-      <div class="section-label mb-5">Featured brands</div>
-      <h2 class="h-sec font-heading font-bold m-0 mb-4">
-        Businesses we've put <span class="text-accent">on the map.</span>
-      </h2>
-      <p class="text-[17px] leading-relaxed text-soft m-0 mx-auto" style="max-width:560px;">
-        From first idea to online presence — we’re helping ambitious businesses take their next step.
-      </p>
+  <section id="work" class="on-ink">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-20 md:pt-28">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+        <div>
+          <div class="section-label mb-5">Featured work</div>
+          <h2 class="h-sec font-heading font-bold m-0">Built to be found. <br class="brk"><span class="text-accent">Designed to grow.</span></h2>
+        </div>
+        <a href="#contact" class="btn-ghost self-start md:self-auto !py-[13px]">Start a Project <span class="text-accent">→</span></a>
+      </div>
     </div>
 
-    <div class="bc-viewport pb-16 md:pb-20">
-      <div class="bc-track">
-          <ul class="bc-set" aria-label="Brands we have built for">
-            <li class="bc-card">
-              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+    <div class="sc-viewport">
+      <div class="sc-track">
+          <ul class="sc-set" aria-label="Recent client builds">
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-rouge-rabbit.webp" alt="Rouge Rabbit online store shown on a tablet" width="880" height="1181" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Streetwear</span>
+                <span class="text-[17px] font-bold">Rouge Rabbit</span>
+                <span class="text-[15px] text-soft">Brand Identity &amp; Online Store</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-dd-sports.webp" alt="D.D Sports Management news page shown on a laptop" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Sports Management</span>
+                <span class="text-[17px] font-bold">DD Sports Management</span>
+                <span class="text-[15px] text-soft">Digital Platform &amp; Business Website</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sterkopad.webp" alt="Sterkopad Entertainment website shown on a laptop" width="880" height="1203" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Music &amp; Entertainment</span>
+                <span class="text-[17px] font-bold">Sterkopad Entertainment</span>
+                <span class="text-[15px] text-soft">Label Website &amp; Artist Hub</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sng.webp" alt="SNG Financials loan calculator shown on a phone" width="880" height="1165" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Financial Services</span>
+                <span class="text-[17px] font-bold">SNG Financials</span>
+                <span class="text-[15px] text-soft">Loan Application Platform</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-galactico.webp" alt="Galactico United FC gallery page shown on a tablet" width="880" height="1180" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Youth Football</span>
+                <span class="text-[17px] font-bold">Galactico United FC</span>
+                <span class="text-[15px] text-soft">Club Website &amp; Match Gallery</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-vitality-h2o.webp" alt="Vitality H2O product page shown on a phone" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Water Delivery</span>
+                <span class="text-[17px] font-bold">Vitality H&#8322;O</span>
+                <span class="text-[15px] text-soft">E-commerce &amp; WhatsApp Ordering</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
-            </li>
-          </ul>
-          <ul class="bc-set" aria-hidden="true">
-            <li class="bc-card">
-              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
-            </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-shaheeds.webp" alt="Shaheed&#8217;s Grab &amp; Go ordering site shown on a phone" width="880" height="1189" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Food &amp; Takeaway</span>
+                <span class="text-[17px] font-bold">Shaheed&#8217;s Grab &amp; Go</span>
+                <span class="text-[15px] text-soft">Online Ordering &amp; Menu</span>
+              </div>
             </li>
           </ul>
-          <ul class="bc-set" aria-hidden="true">
-            <li class="bc-card">
-              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+          <ul class="sc-set" aria-hidden="true">
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-rouge-rabbit.webp" alt="" width="880" height="1181" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Streetwear</span>
+                <span class="text-[17px] font-bold">Rouge Rabbit</span>
+                <span class="text-[15px] text-soft">Brand Identity &amp; Online Store</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-dd-sports.webp" alt="" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Sports Management</span>
+                <span class="text-[17px] font-bold">DD Sports Management</span>
+                <span class="text-[15px] text-soft">Digital Platform &amp; Business Website</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sterkopad.webp" alt="" width="880" height="1203" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Music &amp; Entertainment</span>
+                <span class="text-[17px] font-bold">Sterkopad Entertainment</span>
+                <span class="text-[15px] text-soft">Label Website &amp; Artist Hub</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sng.webp" alt="" width="880" height="1165" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Financial Services</span>
+                <span class="text-[17px] font-bold">SNG Financials</span>
+                <span class="text-[15px] text-soft">Loan Application Platform</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-galactico.webp" alt="" width="880" height="1180" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Youth Football</span>
+                <span class="text-[17px] font-bold">Galactico United FC</span>
+                <span class="text-[15px] text-soft">Club Website &amp; Match Gallery</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-vitality-h2o.webp" alt="" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Water Delivery</span>
+                <span class="text-[17px] font-bold">Vitality H&#8322;O</span>
+                <span class="text-[15px] text-soft">E-commerce &amp; WhatsApp Ordering</span>
+              </div>
             </li>
-            <li class="bc-card">
-              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
-              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-shaheeds.webp" alt="" width="880" height="1189" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Food &amp; Takeaway</span>
+                <span class="text-[17px] font-bold">Shaheed&#8217;s Grab &amp; Go</span>
+                <span class="text-[15px] text-soft">Online Ordering &amp; Menu</span>
+              </div>
+            </li>
+          </ul>
+          <ul class="sc-set" aria-hidden="true">
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-rouge-rabbit.webp" alt="" width="880" height="1181" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Streetwear</span>
+                <span class="text-[17px] font-bold">Rouge Rabbit</span>
+                <span class="text-[15px] text-soft">Brand Identity &amp; Online Store</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-dd-sports.webp" alt="" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Sports Management</span>
+                <span class="text-[17px] font-bold">DD Sports Management</span>
+                <span class="text-[15px] text-soft">Digital Platform &amp; Business Website</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sterkopad.webp" alt="" width="880" height="1203" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Music &amp; Entertainment</span>
+                <span class="text-[17px] font-bold">Sterkopad Entertainment</span>
+                <span class="text-[15px] text-soft">Label Website &amp; Artist Hub</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-sng.webp" alt="" width="880" height="1165" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Financial Services</span>
+                <span class="text-[17px] font-bold">SNG Financials</span>
+                <span class="text-[15px] text-soft">Loan Application Platform</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-galactico.webp" alt="" width="880" height="1180" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Youth Football</span>
+                <span class="text-[17px] font-bold">Galactico United FC</span>
+                <span class="text-[15px] text-soft">Club Website &amp; Match Gallery</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-vitality-h2o.webp" alt="" width="880" height="1206" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Water Delivery</span>
+                <span class="text-[17px] font-bold">Vitality H&#8322;O</span>
+                <span class="text-[15px] text-soft">E-commerce &amp; WhatsApp Ordering</span>
+              </div>
+            </li>
+            <li class="sc-card">
+              <div class="sc-media"><img src="assets/photos/work-shaheeds.webp" alt="" width="880" height="1189" loading="lazy" decoding="async" /></div>
+              <div class="sc-cap">
+                <span class="mono-label text-accent text-[12px]">Food &amp; Takeaway</span>
+                <span class="text-[17px] font-bold">Shaheed&#8217;s Grab &amp; Go</span>
+                <span class="text-[15px] text-soft">Online Ordering &amp; Menu</span>
+              </div>
             </li>
           </ul>
       </div>
+    </div>
+
+    <div class="flex justify-center pb-20 md:pb-28">
+      <a href="gallery.html" class="btn-ghost !py-[13px]">Browse industry starting points <span class="text-accent">→</span></a>
     </div>
   </section>
 
@@ -1199,53 +1397,112 @@
 
 
   <!-- ============================================================
-       FEATURED WORK
+       FEATURED BRANDS
   ============================================================ -->
-  <section id="work" class="max-w-[1280px] mx-auto px-6 md:px-8 py-20 md:py-28">
-    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-12">
-      <div>
-        <div class="section-label mb-5">Featured work</div>
-        <h2 class="h-sec font-heading font-bold m-0">Built to be found. <br class="brk"><span class="text-accent">Designed to grow.</span></h2>
-      </div>
-      <a href="#contact" class="btn-ghost self-start md:self-auto !py-[13px]">Start a Project <span class="text-accent">→</span></a>
+  <section id="brands" style="border-top:1px solid rgba(12,35,28,.08);">
+    <div class="max-w-[1280px] mx-auto px-6 md:px-8 pt-8 md:pt-10 pb-4 text-center">
+      <div class="section-label mb-5">Featured brands</div>
+      <h2 class="h-sec font-heading font-bold m-0 mb-4">
+        Businesses we've put <span class="text-accent">on the map.</span>
+      </h2>
+      <p class="text-[17px] leading-relaxed text-soft m-0 mx-auto" style="max-width:560px;">
+        From first idea to online presence — we’re helping ambitious businesses take their next step.
+      </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
-        <img src="assets/photos/work-rouge-rabbit-store.webp" alt="Rouge Rabbit online store product page" width="1200" height="1285" class="w-full block" style="height:420px;object-fit:cover;object-position:top center;" loading="lazy" />
-        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
-        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
-          <div class="text-[13px] font-bold tracking-[2px] text-accent">STREETWEAR</div>
-          <div class="text-[24px] font-bold">Rouge Rabbit</div>
-          <div class="text-[15px] text-soft">Brand Identity &amp; Online Store</div>
-        </div>
+    <div class="bc-viewport pb-16 md:pb-20">
+      <div class="bc-track">
+          <ul class="bc-set" aria-label="Brands we have built for">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
+          <ul class="bc-set" aria-hidden="true">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
+          <ul class="bc-set" aria-hidden="true">
+            <li class="bc-card">
+              <img src="assets/photos/brand-dd-sports.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#D9A13B"><img src="assets/logos/client-dd-sports.webp" alt="D.D Sports Management Agency — Sports management" width="101" height="63" style="--lw:101px;--lh:63px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-rouge-rabbit.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit — Streetwear" width="56" height="74" style="--lw:56px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-lnk.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#60A6A6"><img src="assets/logos/client-lnk.webp" alt="LNK Creatives — Skin &amp; body care" width="94" height="68" style="--lw:94px;--lh:68px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-vitality-h2o.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#0E2F73"><img src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O — Water treatment" width="75" height="74" style="--lw:75px;--lh:74px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sng.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#3A7255"><img src="assets/logos/client-sng.webp" alt="SNG Financials — Financial services" width="148" height="43" style="--lw:148px;--lh:43px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-sterk-opad.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate" style="--plate:#DC2F3E"><img src="assets/logos/client-sterk-opad.webp" alt="Sterk Opad Entertainment — Entertainment" width="95" height="67" style="--lw:95px;--lh:67px" /></span>
+            </li>
+            <li class="bc-card">
+              <img src="assets/photos/brand-mm-inc.webp" alt="" width="380" height="285" loading="lazy" decoding="async" />
+              <span class="bc-plate"><img src="assets/logos/client-mm-inc.webp" alt="MM Incorporated — Mamabolo at Law" width="179" height="36" style="--lw:179px;--lh:36px" /></span>
+            </li>
+          </ul>
       </div>
-
-      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
-        <img src="assets/photos/work-lnk-store.webp" alt="LNK Creatives online store product page" width="1200" height="1280" class="w-full block" style="height:420px;object-fit:cover;object-position:top center;" loading="lazy" />
-        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
-        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
-          <div class="text-[13px] font-bold tracking-[2px] text-accent">BEAUTY E-COMMERCE</div>
-          <div class="text-[24px] font-bold">LNK Creatives</div>
-          <div class="text-[15px] text-soft">Web Design &amp; Online Store</div>
-        </div>
-      </div>
-
-      <div class="work-card relative rounded-[18px] overflow-hidden" style="border:1px solid rgba(12,35,28,.07);box-shadow:0 18px 50px rgba(0,0,0,.35);">
-        <img src="assets/photos/work-dd-sports-site.webp" alt="D.D Sports Management news page" width="1252" height="638" class="w-full block" style="height:420px;object-fit:cover;object-position:left center;" loading="lazy" />
-        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(12,35,28,.97) 0%, rgba(12,35,28,.88) 30%, rgba(12,35,28,.35) 58%, transparent 78%);"></div>
-        <div class="on-photo absolute left-0 right-0 bottom-0 p-6 flex flex-col gap-1.5">
-          <div class="text-[13px] font-bold tracking-[2px] text-accent">SPORTS MANAGEMENT</div>
-          <div class="text-[24px] font-bold">DD Sports Management</div>
-          <div class="text-[15px] text-soft">Digital Platform &amp; Business Website</div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="flex justify-center mt-12">
-      <a href="gallery.html" class="btn-ghost !py-[13px]">Browse industry starting points <span class="text-accent">→</span></a>
     </div>
   </section>
 
@@ -1722,7 +1979,6 @@
 
       [
         ['#process .grid > *', 90],
-        ['#work > .grid > *', 90],
         ['#stories .items-stretch > *', 120],
         ['#stories .card-panel', 90],
         ['.faq-item', 60],
@@ -1815,6 +2071,32 @@
           if (bcOn && !bcReq) bcReq = requestAnimationFrame(bcFrame);
           else if (!bcOn && bcReq) { cancelAnimationFrame(bcReq); bcReq = null; }
         }, { rootMargin: '120px 0px' }).observe(document.querySelector('#brands'));
+      }
+
+      /* Featured work - scroll gives the drift a nudge.
+         The track's travel stays a CSS animation; this only raises its playbackRate in
+         proportion to scroll speed and eases it back to 1, so a fast flick past the
+         section visibly pushes the posters along. Hover-pause is CSS and unaffected. */
+      var scTrack = document.querySelector('.sc-track');
+      if (scTrack && !reduce && scTrack.getAnimations) {
+        var scAnim = null, scBoost = 0, scLastY = window.scrollY, scReq = null, scOn = false;
+        function scFrame() {
+          if (!scAnim) scAnim = scTrack.getAnimations()[0] || null;
+          scBoost *= 0.92;
+          if (scBoost < 0.01) scBoost = 0;
+          if (scAnim) scAnim.playbackRate = 1 + scBoost;
+          scReq = scBoost > 0 ? requestAnimationFrame(scFrame) : null;
+        }
+        window.addEventListener('scroll', function () {
+          var y = window.scrollY, dy = Math.abs(y - scLastY);
+          scLastY = y;
+          if (!scOn) return;
+          scBoost = Math.min(5, scBoost + dy * 0.04);
+          if (!scReq) scReq = requestAnimationFrame(scFrame);
+        }, { passive: true });
+        new IntersectionObserver(function (es) {
+          scOn = es[0].isIntersecting;
+        }, { rootMargin: '120px 0px' }).observe(document.querySelector('#work'));
       }
 
       /* Count-up numbers */
