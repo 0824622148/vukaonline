@@ -26,3 +26,8 @@
 # Raw originals — never ship these
 *.png
 .thumbnail
+
+# Favicons are PNG/ICO but must ship
+!/favicon.ico
+!/assets/favicon-*.png
+!/assets/apple-touch-icon.png

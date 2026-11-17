@@ -14,7 +14,11 @@
   <meta name="theme-color" content="#F2F7F3" />
   <meta name="robots" content="index, follow" />
 
-  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 
   <!-- Fonts: Familjen Grotesk (headlines & body) + IBM Plex Mono (labels & data) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -117,7 +121,7 @@
     .h-hero, .h-band, .h-sec { letter-spacing: -0.02em; }
     /* Sized for the split hero: at ~600px of column, 76px forced the headline to
        five lines and fought its own hard breaks. */
-    .h-hero  { font-size: clamp(38px, 4.3vw, 56px);  line-height: 1.06; }
+    .h-hero  { font-size: clamp(38px, 4.3vw, 50px);  line-height: 1.06; }
     .h-band  { font-size: clamp(34px, 5.4vw, 60px);  line-height: 1.06; }
     .h-sec   { font-size: clamp(30px, 4.6vw, 54px);  line-height: 1.09; }
 
@@ -260,7 +264,7 @@
       .hm-copy-wrap { width: 100%; padding-top: 140px; padding-bottom: 96px; }
       .hm-copy-wrap .hero-copy { max-width: 46%; }
     }
-    @media (min-width: 1280px) { .hm-copy-wrap .hero-copy { max-width: 600px; } }
+    @media (min-width: 1280px) { .hm-copy-wrap .hero-copy { max-width: 620px; } }
 
     /* Trusted strip on Ink: same silhouette idea, flipped to Mist. */
     .on-ink .tb-logo { filter: brightness(0) invert(1); opacity: .6; }
@@ -281,7 +285,7 @@
        Hover lifts opacity but keeps the silhouette. Restoring full colour is the usual
        move here and is deliberately NOT done — it would turn the three white logos
        invisible against Mist, which is the exact problem the silhouette solves. */
-    .tb-row { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 28px; }
+    .tb-row { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 20px; }
     .tb-logo {
       height: var(--h, 30px); width: auto; display: block; flex-shrink: 0;
       filter: brightness(0); opacity: .55;
@@ -790,24 +794,24 @@
 
     <div class="relative z-[2] max-w-[1280px] mx-auto px-6 md:px-8 hm-copy-wrap">
       <div class="hero-copy flex flex-col gap-6 md:gap-7">
-        <span class="section-label self-start">Discoverable · Trusted · Accessible</span>
+        <span class="section-label self-start">For businesses ready for more</span>
 
         <h1 class="h-hero font-heading font-bold m-0">
-          Wake up your business. <br class="brk"><span class="text-accent">Your craft deserves an audience.</span>
+          Your customers are online. <br class="brk"><span class="text-accent">Your business should be too.</span>
         </h1>
 
         <p class="text-soft m-0" style="font-size: clamp(17px, 2vw, 21px); line-height: 1.55; max-width: 520px;">
-          You’ve built something worth sharing. We build the digital foundation that helps the right customers find you, trust you, and do business with you — wherever they are.
+          We build professional websites, online stores and digital systems that put your business in front of the right people and make it easier to win their business.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4">
-          <a href="#contact" class="btn-primary !text-[17px] !px-7">See how we can help <span>→</span></a>
-          <a href="#work" class="btn-ghost !text-[17px] !px-7">See our work <span class="text-accent">→</span></a>
+          <a href="#contact" class="btn-primary !text-[17px] !px-7">Get your business online <span>→</span></a>
+          <a href="#services" class="btn-ghost !text-[17px] !px-7">See what we do <span class="text-accent">→</span></a>
         </div>
 
         <div class="mt-3 flex flex-col gap-3.5">
           <div class="text-[12px] font-bold tracking-[0.25em] text-soft">BUSINESSES BUILDING WITH VUKA</div>
-          <!-- Heights are tuned per logo, not shared: all seven files are 160px tall
+          <!-- Heights are tuned per logo, not shared: all nine files are 160px tall
                natively but run 0.75–5.00 in aspect, so a single CSS height would leave
                the wordmarks enormous and the upright marks tiny. -->
           <div class="tb-row">
@@ -818,7 +822,8 @@
             <img class="tb-logo" src="assets/logos/client-lnk.webp" alt="LNK Creatives" width="40" height="29" style="--h:29px" decoding="async" />
             <img class="tb-logo" src="assets/logos/client-vitality-h2o.webp" alt="Vitality H2O" width="29" height="29" style="--h:29px" decoding="async" />
             <img class="tb-logo" src="assets/logos/client-rouge-rabbit.webp" alt="Rouge Rabbit" width="25" height="33" style="--h:33px" decoding="async" />
-            <span class="tb-name italic">Atelier Nou</span>
+            <img class="tb-logo" src="assets/logos/client-galactico-alpha.webp" alt="Galactico United FC" width="32" height="32" style="--h:32px" decoding="async" />
+            <img class="tb-logo" src="assets/logos/client-shaheeds.webp" alt="Shaheed's Grab &amp; Go" width="55" height="28" style="--h:28px" decoding="async" />
           </div>
         </div>
       </div>
